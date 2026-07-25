@@ -112,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onActivated, computed } from 'vue'
 import { meApi } from '../api'
 import { usePlayerStore } from '../store/player'
 import { ElMessage } from 'element-plus'
@@ -127,10 +127,13 @@ const following = ref([])
 
 const unreadCount = computed(() => notifications.value.filter(n => n.isRead === 0).length)
 
-onMounted(() => {
+const init = () => {
   document.title = '我的 · Music Dreamer'
   loadAll()
-})
+}
+
+onMounted(init)
+onActivated(init)
 
 const loadAll = async () => {
   loading.value = true
