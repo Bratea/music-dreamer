@@ -100,13 +100,14 @@
 <script setup>
 import { ref, onMounted, computed, reactive, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { songApi } from '../api'
+import { songApi, authApi } from '../api'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
 
-const isSinger = ref(false)
+const roles = ref([])
+const isSinger = computed(() => roles.value.includes('SINGER') || roles.value.includes('ADMIN'))
 const loading = ref(false)
 const songs = ref([])
 const statusFilter = ref(null)
