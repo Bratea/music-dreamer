@@ -33,7 +33,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   const singerPaths = ['/singer', '/singer/apply']
-  const adminPaths = ['/admin']
+  const adminPaths = ['/admin', '/stats']
   if ((singerPaths.some(p => to.path.startsWith(p)) || adminPaths.some(p => to.path.startsWith(p))) && !token) {
     next('/login')
   } else {
