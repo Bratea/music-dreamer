@@ -171,7 +171,7 @@ public class AdminController {
         resp.setTotalUsers(userService.count());
         CommonResult<Long> countResult = songFeignClient.count();
         resp.setTotalSongs(countResult.getData() != null ? countResult.getData() : 0L);
-        CommonResult<List<SongDTO>> listResult = songFeignClient.listAll();
+        CommonResult<List<Song>> listResult = songFeignClient.listAll();
         resp.setTotalPlayCount(listResult.getData() != null ? listResult.getData().stream()
                 .mapToLong(s -> s.getPlayCount() != null ? s.getPlayCount() : 0)
                 .sum() : 0L);
