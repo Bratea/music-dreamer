@@ -143,8 +143,9 @@ const loadAll = async () => {
 
 const loadCollections = async () => {
   try {
-    const { data } = await meApi.getCollections()
-    collections.value = (data?.data || []).map(c => ({
+    const res = await meApi.getCollections()
+    const d = res?.data || res || []
+    collections.value = (Array.isArray(d) ? d : []).map(c => ({
       ...c,
       name: c.targetType === 1 ? `歌曲 #${c.targetId}` : `歌单 #${c.targetId}`,
       singerName: '',
@@ -155,8 +156,9 @@ const loadCollections = async () => {
 
 const loadHistory = async () => {
   try {
-    const { data } = await meApi.getHistory()
-    history.value = (data?.data || []).map(h => ({
+    const res = await meApi.getHistory()
+    const d = res?.data || res || []
+    history.value = (Array.isArray(d) ? d : []).map(h => ({
       ...h,
       name: `歌曲 #${h.songId}`,
       singerName: '',
@@ -167,15 +169,17 @@ const loadHistory = async () => {
 
 const loadNotifications = async () => {
   try {
-    const { data } = await meApi.getNotifications()
-    notifications.value = data?.data || []
+    const res = await meApi.getNotifications()
+    const d = res?.data || res || []
+    notifications.value = Array.isArray(d) ? d : []
   } catch (e) { notifications.value = [] }
 }
 
 const loadFollowing = async () => {
   try {
-    const { data } = await meApi.getFollowing()
-    following.value = (data?.data || []).map(f => ({
+    const res = await meApi.getFollowing()
+    const d = res?.data || res || []
+    following.value = (Array.isArray(d) ? d : []).map(f => ({
       singerId: f.singerId,
       name: `歌手 #${f.singerId}`,
       intro: '',
