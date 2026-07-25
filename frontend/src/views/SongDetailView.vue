@@ -73,7 +73,9 @@
           </div>
           <template v-else>
             <div class="related-item" v-for="(item, i) in relatedSongs" :key="item.songId || i" @click="switchSong(item)">
-              <span class="related-cover">{{ item.cover || '🎵' }}</span>
+              <div class="related-cover" :style="item.cover ? { backgroundImage: 'url(' + item.cover + ')', backgroundSize: 'cover', backgroundPosition: 'center' } : { background: 'linear-gradient(135deg, rgba(70,246,230,0.12), rgba(146,93,255,0.12))' }">
+                <span v-if="!item.cover">🎵</span>
+              </div>
               <div class="related-meta">
                 <div class="related-name">{{ item.name }}</div>
                 <div class="related-singer">{{ item.singerName }}</div>
