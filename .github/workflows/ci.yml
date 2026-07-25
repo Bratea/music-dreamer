@@ -64,5 +64,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check SQL files exist
         run: |
-          test -f sql/schema.sql && echo "schema.sql OK" || exit 1
+          test -f sql/01_schema.sql && echo "schema.sql OK" || exit 1
           test -f backend/services/search-service/src/main/resources/es/create-song-index.json && echo "ES index JSON OK" || exit 1
