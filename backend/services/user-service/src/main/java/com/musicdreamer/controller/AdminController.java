@@ -7,6 +7,7 @@ import com.musicdreamer.dto.DailyStat;
 import com.musicdreamer.entity.Role;
 import com.musicdreamer.entity.SingerApply;
 import com.musicdreamer.dto.SongDTO;
+import com.musicdreamer.entity.Song;
 import com.musicdreamer.entity.User;
 import com.musicdreamer.entity.UserRole;
 import com.musicdreamer.feign.SongFeignClient;
