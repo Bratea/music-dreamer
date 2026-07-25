@@ -58,5 +58,5 @@ public interface SongFeignClient {
      * 查询所有歌曲（用于统计播放量）
      */
     @GetMapping("/api/song/list/all")
-    CommonResult<List<SongDTO>> listAll();
+    CommonResult<List<Song>> listAll();
 }
