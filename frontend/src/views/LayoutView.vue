@@ -64,7 +64,7 @@
       <!-- Page Content -->
       <div class="app-content">
         <router-view v-slot="{ Component }">
-          <keep-alive include="HomeView,SearchView">
+          <keep-alive include="HomeView,SearchView,MyProfileView">
             <component :is="Component" />
           </keep-alive>
         </router-view>
