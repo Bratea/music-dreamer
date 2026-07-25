@@ -123,6 +123,12 @@ const formatDate = (t) => t ? new Date(t).toLocaleDateString() : '-'
 
 onMounted(async () => {
   try {
+    const userInfo = await authApi.getUserInfo()
+    if (userInfo?.code === 200) {
+      roles.value = userInfo.data?.roles || []
+    }
+  } catch (e) { /* not logged in */ }
+  try {
     const { data } = await songApi.mySongs(null)
     songs.value = data?.data || []
   } catch (e) { songs.value = [] }
