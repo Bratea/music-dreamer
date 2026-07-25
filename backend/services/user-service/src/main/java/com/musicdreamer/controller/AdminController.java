@@ -122,7 +122,21 @@ public class AdminController {
     @GetMapping("/songs/pending")
     @Operation(summary = "待审核歌曲列表")
     public CommonResult<List<SongDTO>> pendingSongs() {
-        return songFeignClient.pendingSongs();
+        CommonResult<List<Song>> result = songFeignClient.pendingSongs();
+        if (result.getData() == null) return CommonResult.success(List.of());
+        List<SongDTO> dtoList = result.getData().stream().map(s -> {
+            SongDTO dto = new SongDTO();
+            dto.setSongId(s.getSongId());
+            dto.setName(s.getName());
+            dto.setSingerId(s.getSingerId());
+            dto.setGenre(s.getGenre());
+            dto.setLanguage(s.getLanguage());
+            dto.setPlayCount(s.getPlayCount());
+            dto.setStatus(s.getStatus());
+            dto.setCreateTime(s.getCreateTime());
+            return dto;
+        }).toList();
+        return CommonResult.success(dtoList);
     }
 
     @PutMapping("/song/{id}/audit/pass")
