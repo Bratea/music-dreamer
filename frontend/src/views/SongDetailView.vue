@@ -515,6 +515,17 @@ const formatDuration = (s) => {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.related-list::-webkit-scrollbar {
+  width: 4px;
+}
+.related-list::-webkit-scrollbar-thumb {
+  background: rgba(70, 246, 230, 0.2);
+  border-radius: 2px;
 }
 
 .related-loading {
