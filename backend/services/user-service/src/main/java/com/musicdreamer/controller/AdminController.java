@@ -110,8 +110,8 @@ public class AdminController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size) {
         // 通过 Feign 调用 song-service 获取歌曲列表
-        CommonResult<List<SongDTO>> songResult = songFeignClient.listAll();
-        List<SongDTO> allSongs = songResult.getData();
+        CommonResult<List<Song>> songResult = songFeignClient.listAll();
+        List<Song> allSongs = songResult.getData();
         Map<String, Object> result = new HashMap<>();
         result.put("total", allSongs != null ? allSongs.size() : 0);
         result.put("page", page);
