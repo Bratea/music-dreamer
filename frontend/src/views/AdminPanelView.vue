@@ -173,30 +173,37 @@ onMounted(async () => {
 
 const loadStats = async () => {
   try {
-    const { data } = await adminApi.statsOverview()
-    Object.assign(stats, data?.data || stats)
-  } catch (e) { console.error(e) }
+    const res = await adminApi.statsOverview()
+    const d = res?.data?.data || res?.data || {}
+    stats.totalUsers = d.totalUsers || 0
+    stats.totalSongs = d.totalSongs || 0
+    stats.totalPlayCount = d.totalPlayCount || 0
+  } catch (e) { console.error('loadStats error:', e) }
 }
 const loadPendingSongs = async () => {
   loading.value = true
   try {
-    const { data } = await adminApi.pendingSongs()
-    pendingSongs.value = data?.data || []
+    const res = await adminApi.pendingSongs()
+    const d = res?.data?.data || res?.data || []
+    pendingSongs.value = Array.isArray(d) ? d : []
     pendingCount.value = pendingSongs.value.length
-  } finally { loading.value = false }
+  } catch (e) { console.error('loadPendingSongs error:', e); pendingSongs.value = []; pendingCount.value = 0 }
+  finally { loading.value = false }
 }
 const loadPendingApplies = async () => {
   try {
-    const { data } = await adminApi.getPendingApplies()
-    pendingApplies.value = data?.data || []
+    const res = await adminApi.getPendingApplies()
+    const d = res?.data?.data || res?.data || []
+    pendingApplies.value = Array.isArray(d) ? d : []
   } catch (e) { pendingApplies.value = [] }
 }
 const loadUsers = async () => {
   try {
-    const { data } = await adminApi.userList(1, 50)
-    userList.value = data?.data?.list || []
-    userTotal.value = data?.data?.total || 0
-  } catch (e) { userList.value = [] }
+    const res = await adminApi.userList(1, 50)
+    const d = res?.data?.data || res?.data || {}
+    userList.value = d.list || []
+    userTotal.value = d.total || 0
+  } catch (e) { userList.value = []; userTotal.value = 0 }
 }
 
 const auditPass = async (id) => {
