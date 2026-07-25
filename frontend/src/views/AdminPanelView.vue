@@ -22,41 +22,6 @@
       </div>
     </div>
 
-    <!-- 数据统计图表 -->
-    <div class="card chart-card">
-      <h3>📊 数据统计</h3>
-      <div class="chart-container">
-        <div class="bar-item">
-          <div class="bar-label">用户</div>
-          <div class="bar-track">
-            <div class="bar-fill" :style="{width: barWidth(stats.totalUsers), background: '#46f6e6'}"></div>
-          </div>
-          <div class="bar-value">{{ stats.totalUsers }}</div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-label">歌曲</div>
-          <div class="bar-track">
-            <div class="bar-fill" :style="{width: barWidth(stats.totalSongs), background: '#925dff'}"></div>
-          </div>
-          <div class="bar-value">{{ stats.totalSongs }}</div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-label">播放量</div>
-          <div class="bar-track">
-            <div class="bar-fill" :style="{width: barWidth(stats.totalPlayCount), background: '#fbbf24'}"></div>
-          </div>
-          <div class="bar-value">{{ formatCount(stats.totalPlayCount) }}</div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-label">待审核</div>
-          <div class="bar-track">
-            <div class="bar-fill" :style="{width: barWidth(pendingCount), background: '#fb923c'}"></div>
-          </div>
-          <div class="bar-value">{{ pendingCount }}</div>
-        </div>
-      </div>
-    </div>
-
     <!-- Tabs -->
     <div class="tabs">
       <button :class="{ active: tab === 'songs' }" @click="tab = 'songs'">🎵 歌曲审核</button>
@@ -302,13 +267,6 @@ const barWidth = (val) => {
 .tabs button.active { background: #42b983; color: #fff; border-color: #42b983; }
 .card { background: #1e1e2e; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
 .card h3 { margin: 0 0 16px; }
-.chart-card { margin-bottom: 24px; }
-.chart-container { display: flex; flex-direction: column; gap: 12px; }
-.bar-item { display: flex; align-items: center; gap: 12px; }
-.bar-label { width: 60px; font-size: 0.85rem; color: #9b9daa; text-align: right; flex-shrink: 0; }
-.bar-track { flex: 1; height: 28px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; position: relative; }
-.bar-fill { height: 100%; border-radius: 6px; transition: width 0.6s ease; min-width: 4px; }
-.bar-value { width: 80px; font-size: 0.85rem; color: #f3f2ef; font-weight: 600; flex-shrink: 0; }
 .data-table { width: 100%; border-collapse: collapse; }
 .data-table th, .data-table td { padding: 10px; text-align: left; border-bottom: 1px solid #2a2a4e; }
 .data-table th { color: #888; font-size: 0.8rem; }
