@@ -98,7 +98,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, reactive } from 'vue'
+import { ref, onMounted, computed, reactive, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { songApi } from '../api'
 import { ElMessage } from 'element-plus'
