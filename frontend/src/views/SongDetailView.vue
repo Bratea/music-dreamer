@@ -141,7 +141,8 @@ const loadRelated = async (id) => {
   relatedLoading.value = true
   try {
     const res = await songApi.getSimilar(id, 6)
-    relatedSongs.value = res?.songs || []
+    const d = res?.data?.songs || res?.data || res || []
+    relatedSongs.value = Array.isArray(d) ? d : []
   } catch (e) {
     relatedSongs.value = []
   } finally {
