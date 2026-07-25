@@ -143,8 +143,9 @@ onActivated(init)
 const loadSongs = async () => {
   loading.value = true
   try {
-    const { data } = await songApi.mySongs(statusFilter.value)
-    songs.value = data?.data || []
+    const res = await songApi.mySongs(statusFilter.value)
+    const d = res?.data || res || []
+    songs.value = Array.isArray(d) ? d : []
   } finally { loading.value = false }
 }
 
