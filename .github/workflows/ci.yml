@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build & Test (skip tests)
-        run: mvn -B -q clean package -DskipTests
+        run: mvn -B -q clean package -Dmaven.test.skip=true
         working-directory: ./backend
       - name: Verify syntax (spotbugs optional)
         run: mvn -B -q spotbugs:check
