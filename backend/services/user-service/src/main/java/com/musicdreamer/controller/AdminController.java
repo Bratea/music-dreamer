@@ -143,7 +143,7 @@ public class AdminController {
     @Operation(summary = "审核通过歌曲")
     public CommonResult<Void> auditPass(@PathVariable Long id,
                                         @RequestAttribute("userId") Long auditorId) {
-        return songFeignClient.auditPass(id, auditorId);
+        return songFeignClient.auditPass(id, auditorId != null ? auditorId : 1L);
     }
 
     @PutMapping("/song/{id}/audit/reject")
@@ -151,7 +151,7 @@ public class AdminController {
     public CommonResult<Void> auditReject(@PathVariable Long id,
                                           @RequestAttribute("userId") Long auditorId,
                                           @RequestParam String reason) {
-        return songFeignClient.auditReject(id, auditorId, reason);
+        return songFeignClient.auditReject(id, auditorId != null ? auditorId : 1L, reason);
     }
 
     @PutMapping("/song/{id}/offline")
