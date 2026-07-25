@@ -22,6 +22,12 @@ spring:
         server-addr: ${NACOS_SERVER_ADDR:nacos:8848}
   elasticsearch:
     uris: http://${ES_HOST:elasticsearch}:9200
+  # Canal 回查 MySQL 补全 singerName / lyrics 等字段
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/music_dreamer?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USER:music}
+    password: ${MYSQL_PASSWORD:music123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   http:
     encoding:
       charset: UTF-8

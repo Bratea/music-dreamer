@@ -19,6 +19,7 @@ C:\Users\tong tong\Desktop\music-dreamer\backend\services\user-service\src\main\
 C:\Users\tong tong\Desktop\music-dreamer\backend\services\user-service\src\main\java\com\musicdreamer\dto\UserInfoResponse.java
 C:\Users\tong tong\Desktop\music-dreamer\backend\services\user-service\src\main\java\com\musicdreamer\entity\Role.java
 C:\Users\tong tong\Desktop\music-dreamer\backend\services\user-service\src\main\java\com\musicdreamer\entity\SingerApply.java
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\user-service\src\main\java\com\musicdreamer\entity\Song.java
 C:\Users\tong tong\Desktop\music-dreamer\backend\services\user-service\src\main\java\com\musicdreamer\entity\User.java
 C:\Users\tong tong\Desktop\music-dreamer\backend\services\user-service\src\main\java\com\musicdreamer\entity\UserRole.java
 C:\Users\tong tong\Desktop\music-dreamer\backend\services\user-service\src\main\java\com\musicdreamer\feign\SongFeignClient.java
