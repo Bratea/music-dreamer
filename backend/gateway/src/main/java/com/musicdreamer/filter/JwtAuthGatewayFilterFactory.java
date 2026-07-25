@@ -25,8 +25,8 @@ public class JwtAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Ob
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             String path = exchange.getRequest().getPath().value();
-            // Skip auth for public paths
-            if (path.startsWith("/api/auth/") || path.startsWith("/api/search") || path.startsWith("/api/playlist") || path.startsWith("/api/song")) {
+            // Skip auth for public paths (use trailing slash to avoid matching /api/singer/* etc.)
+            if (path.startsWith("/api/auth/") || path.startsWith("/api/search/") || path.startsWith("/api/playlist/") || path.startsWith("/api/song/") || path.equals("/api/song")) {
                 return chain.filter(exchange);
             }
 
