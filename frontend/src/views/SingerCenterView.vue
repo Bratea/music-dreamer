@@ -121,7 +121,7 @@ const statusText = (s) => ({ 0: '已下架', 1: '已上架', 2: '审核中' }[s]
 const statusClass = (s) => ({ 0: 'gray', 1: 'green', 2: 'orange' }[s] || '')
 const formatDate = (t) => t ? new Date(t).toLocaleDateString() : '-'
 
-onMounted(async () => {
+const init = async () => {
   try {
     const userInfo = await authApi.getUserInfo()
     if (userInfo?.code === 200) {
@@ -132,7 +132,10 @@ onMounted(async () => {
     const { data } = await songApi.mySongs(null)
     songs.value = data?.data || []
   } catch (e) { songs.value = [] }
-})
+}
+
+onMounted(init)
+onActivated(init)
 
 const loadSongs = async () => {
   loading.value = true
