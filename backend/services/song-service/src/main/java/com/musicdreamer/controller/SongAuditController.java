@@ -66,7 +66,7 @@ public class SongAuditController {
     @PutMapping("/song/{id}/audit/pass")
     @Operation(summary = "审核通过歌曲")
     public CommonResult<Void> auditPass(@PathVariable Long id,
-                                        @RequestAttribute("userId") Long auditorId) {
+                                        @RequestParam(value = "auditorId", required = false) Long auditorId) {
         Song song = new Song();
         song.setSongId(id);
         song.setStatus(1);
@@ -77,7 +77,7 @@ public class SongAuditController {
     @PutMapping("/song/{id}/audit/reject")
     @Operation(summary = "审核拒绝歌曲")
     public CommonResult<Void> auditReject(@PathVariable Long id,
-                                          @RequestAttribute("userId") Long auditorId,
+                                          @RequestParam(value = "auditorId", required = false) Long auditorId,
                                           @RequestParam String reason) {
         Song song = new Song();
         song.setSongId(id);
