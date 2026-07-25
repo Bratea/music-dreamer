@@ -207,6 +207,7 @@ watch(statusFilter, loadSongs)
 .form-row input:focus, .form-row textarea:focus { border-color: #42b983; outline: none; }
 .btn-primary { background: #42b983; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; grid-column: 1 / -1; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.table-scroll { max-height: 400px; overflow-y: auto; overflow-x: hidden; }
 .data-table { width: 100%; border-collapse: collapse; }
 .data-table th, .data-table td { padding: 10px; text-align: left; border-bottom: 1px solid #2a2a4e; }
 .data-table th { color: #888; font-size: 0.8rem; }
