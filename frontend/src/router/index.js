@@ -18,6 +18,7 @@ const routes = [
       { path: '/singer', name: 'SingerCenter', component: () => import('../views/SingerCenterView.vue') },
       { path: '/singer/apply', name: 'SingerApply', component: () => import('../views/SingerApplyView.vue') },
       { path: '/admin', name: 'AdminPanel', component: () => import('../views/AdminPanelView.vue') },
+      { path: '/stats', name: 'DataStats', component: () => import('../views/DataStatsView.vue') },
       { path: '/my', name: 'MyProfile', component: () => import('../views/MyProfileView.vue') },
     ]
   },
