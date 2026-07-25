@@ -132,7 +132,7 @@ public class AdminController {
             dto.setSingerId(s.getSingerId());
             dto.setGenre(s.getGenre());
             dto.setLanguage(s.getLanguage());
-            dto.setPlayCount(s.getPlayCount());
+            dto.setPlayCount(s.getPlayCount() != null ? s.getPlayCount().longValue() : 0L);
             dto.setStatus(s.getStatus());
             dto.setCreateTime(s.getCreateTime());
             return dto;
