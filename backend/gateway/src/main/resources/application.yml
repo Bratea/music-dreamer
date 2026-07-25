@@ -24,6 +24,12 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        - id: admin-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - name: JwtAuth
         - id: user-service
           uri: lb://user-service
           predicates:
