@@ -1,0 +1,35 @@
+server:
+  port: 8084
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  application:
+    name: search-service
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:nacos:8848}
+  elasticsearch:
+    uris: http://${ES_HOST:elasticsearch}:9200
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+logging:
+  level:
+    com.musicdreamer: DEBUG
+    org.springframework.data.elasticsearch: DEBUG
+

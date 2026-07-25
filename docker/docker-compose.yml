@@ -1,0 +1,316 @@
+# Music Dreamer 全栈一键启动
+# 一键启动: docker-compose up -d
+# 仅启动基础设施: docker-compose up -d mysql redis elasticsearch nacos rabbitmq
+
+services:
+  # ==========================================
+  # 基础设施服务
+  # ==========================================
+
+  # MySQL 8.0
+  mysql:
+    image: mysql:8.0
+    container_name: music-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: music_dreamer
+      MYSQL_USER: music
+      MYSQL_PASSWORD: music123456
+      TZ: Asia/Shanghai
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ../sql:/docker-entrypoint-initdb.d:ro
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --log-bin=mysql-bin --binlog-format=ROW --server-id=1 --binlog-row-image=FULL
+    networks:
+      - music-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis 6.x
+  redis:
+    image: redis:6-alpine
+    container_name: music-redis
+    restart: always
+    command: redis-server --requirepass redis123456 --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - music-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis123456", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Elasticsearch 7.x
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10
+    container_name: music-es
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+      - http.cors.allow-credentials=true
+      - TZ=Asia/Shanghai
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    networks:
+      - music-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Nacos 2.x
+  nacos:
+    image: nacos/nacos-server:v2.4.0.1
+    container_name: music-nacos
+    restart: always
+    environment:
+      - MODE=standalone
+      - TZ=Asia/Shanghai
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - nacos-logs:/home/nacos/logs
+    networks:
+      - music-network
+
+  # RabbitMQ 3.x
+  rabbitmq:
+    image: rabbitmq:3.13.7-management-alpine
+    container_name: music-rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: musicdreamer
+      RABBITMQ_DEFAULT_PASS: music123456
+      TZ: Asia/Shanghai
+    ports:
+      - "5672:5672"   # AMQP 协议
+      - "15672:15672" # Web UI
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - music-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # 后端微服务
+  # ==========================================
+
+  # 用户服务 :8081
+  user-service:
+    build:
+      context: ../backend
+      dockerfile: services/user-service/Dockerfile
+    container_name: music-user-service
+    restart: always
+    environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_USER: music
+      MYSQL_PASSWORD: music123456
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: redis123456
+      TZ: Asia/Shanghai
+    ports:
+      - "8081:8081"
+    depends_on:
+      nacos:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - music-network
+
+  # 歌曲服务 :8082
+  song-service:
+    build:
+      context: ../backend
+      dockerfile: services/song-service/Dockerfile
+    container_name: music-song-service
+    restart: always
+    environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_USER: music
+      MYSQL_PASSWORD: music123456
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: redis123456
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: musicdreamer
+      RABBITMQ_PASS: music123456
+      TZ: Asia/Shanghai
+    ports:
+      - "8082:8082"
+    depends_on:
+      nacos:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - music-network
+
+  # 歌单服务 :8083
+  playlist-service:
+    build:
+      context: ../backend
+      dockerfile: services/playlist-service/Dockerfile
+    container_name: music-playlist-service
+    restart: always
+    environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      MYSQL_HOST: mysql
+      MYSQL_USER: music
+      MYSQL_PASSWORD: music123456
+      TZ: Asia/Shanghai
+    ports:
+      - "8083:8083"
+    depends_on:
+      nacos:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+    networks:
+      - music-network
+
+  # 搜索服务 :8084
+  search-service:
+    build:
+      context: ../backend
+      dockerfile: services/search-service/Dockerfile
+    container_name: music-search-service
+    restart: always
+    environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      ES_HOST: elasticsearch
+      ES_USERNAME: elastic
+      ES_PASSWORD: changeme
+      MYSQL_HOST: mysql
+      MYSQL_USER: music
+      MYSQL_PASSWORD: music123456
+      TZ: Asia/Shanghai
+    ports:
+      - "8084:8084"
+    depends_on:
+      nacos:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - music-network
+
+  # 歌曲异步处理服务 :8085
+  song-process-service:
+    build:
+      context: ../backend
+      dockerfile: services/song-process-service/Dockerfile
+    container_name: music-song-process-service
+    restart: always
+    environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: musicdreamer
+      RABBITMQ_PASS: music123456
+      TZ: Asia/Shanghai
+    ports:
+      - "8085:8085"
+    depends_on:
+      nacos:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - music-network
+
+  # API 网关 :8080
+  gateway:
+    build:
+      context: ../backend
+      dockerfile: gateway/Dockerfile
+    container_name: music-gateway
+    restart: always
+    environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      TZ: Asia/Shanghai
+    ports:
+      - "8080:8080"
+    depends_on:
+      nacos:
+        condition: service_started
+      user-service:
+        condition: service_started
+      song-service:
+        condition: service_started
+      playlist-service:
+        condition: service_started
+      search-service:
+        condition: service_started
+    networks:
+      - music-network
+
+  # ==========================================
+  # 前端
+  # ==========================================
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: music-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      gateway:
+        condition: service_started
+    networks:
+      - music-network
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+  es-data:
+    driver: local
+  nacos-logs:
+    driver: local
+  rabbitmq-data:
+    driver: local
+
+networks:
+  music-network:
+    driver: bridge

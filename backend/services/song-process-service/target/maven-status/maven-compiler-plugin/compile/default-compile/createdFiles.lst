@@ -1,0 +1,8 @@
+com\musicdreamer\common\CommonResult.class
+com\musicdreamer\config\RabbitMQConfig.class
+com\musicdreamer\dto\SongDTO.class
+com\musicdreamer\service\SongEventPublisher.class
+com\musicdreamer\SongProcessServiceApplication.class
+com\musicdreamer\entity\SongPublishEvent.class
+com\musicdreamer\controller\RabbitMQTestController.class
+com\musicdreamer\service\SongEventConsumer.class

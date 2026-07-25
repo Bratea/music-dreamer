@@ -1,0 +1,58 @@
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1,
+    "analysis": {
+      "analyzer": {
+        "default": {
+          "type": "ik_max_word"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "songId": {
+        "type": "long"
+      },
+      "name": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "singerName": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "lyrics": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "genre": {
+        "type": "keyword"
+      },
+      "language": {
+        "type": "keyword"
+      },
+      "playCount": {
+        "type": "integer"
+      },
+      "releaseDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd||yyyy-MM||yyyy"
+      }
+    }
+  }
+}

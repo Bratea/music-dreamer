@@ -1,0 +1,90 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:nacos:8848}
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - name: JwtAuth
+        - id: song-service
+          uri: lb://song-service
+          predicates:
+            - Path=/api/song/**
+          filters:
+            - name: JwtAuth
+        - id: playlist-service
+          uri: lb://playlist-service
+          predicates:
+            - Path=/api/playlist/**
+          filters:
+            - name: JwtAuth
+        - id: search-service
+          uri: lb://search-service
+          predicates:
+            - Path=/api/search/**
+        # 用户交互接口（收藏/历史/通知/关注）→ playlist-service
+        - id: user-interaction
+          uri: lb://playlist-service
+          predicates:
+            - Path=/api/me/**
+          filters:
+            - name: JwtAuth
+        # 歌手歌曲管理（发布/我的歌曲/编辑/上下架）→ song-service
+        - id: singer-song-service
+          uri: lb://song-service
+          predicates:
+            - Path=/api/singer/song/**
+          filters:
+            - name: JwtAuth
+        # 歌手认证 & 歌手管理辅助 → user-service
+        - id: singer-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/singer/**
+          filters:
+            - name: JwtAuth
+        # Auth endpoints (no auth required)
+        - id: auth
+          uri: lb://user-service
+          predicates:
+            - Path=/api/auth/**
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring.cloud.sentinel.transport.dashboard: localhost:8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    com.musicdreamer: DEBUG
+
+jwt:
+  secret: musicdreamer2025secretkeymusicdreamer2025secret
+  expiration: 86400000

@@ -1,0 +1,41 @@
+server:
+  port: 8084
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  application:
+    name: search-service
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:nacos:8848}
+  elasticsearch:
+    uris: http://${ES_HOST:elasticsearch}:9200
+  # Canal 回查 MySQL 补全 singerName / lyrics 等字段
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/music_dreamer?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USER:music}
+    password: ${MYSQL_PASSWORD:music123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+logging:
+  level:
+    com.musicdreamer: DEBUG
+    org.springframework.data.elasticsearch: DEBUG
+

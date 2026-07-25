@@ -1,0 +1,8 @@
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\song-process-service\src\main\java\com\musicdreamer\common\CommonResult.java
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\song-process-service\src\main\java\com\musicdreamer\config\RabbitMQConfig.java
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\song-process-service\src\main\java\com\musicdreamer\controller\RabbitMQTestController.java
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\song-process-service\src\main\java\com\musicdreamer\dto\SongDTO.java
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\song-process-service\src\main\java\com\musicdreamer\entity\SongPublishEvent.java
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\song-process-service\src\main\java\com\musicdreamer\service\SongEventConsumer.java
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\song-process-service\src\main\java\com\musicdreamer\service\SongEventPublisher.java
+C:\Users\tong tong\Desktop\music-dreamer\backend\services\song-process-service\src\main\java\com\musicdreamer\SongProcessServiceApplication.java
