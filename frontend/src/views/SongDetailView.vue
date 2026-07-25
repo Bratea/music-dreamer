@@ -191,14 +191,20 @@ const onCollect = async () => {
   if (!song.value) return
   try {
     if (collected.value) {
-      await songApi.uncollect(song.value.songId)
-      collected.value = false
+      const res = await songApi.uncollect(song.value.songId)
+      if (res?.code === 200) {
+        collected.value = false
+        ElMessage.success('已取消收藏')
+      }
     } else {
-      await songApi.collect(song.value.songId)
-      collected.value = true
+      const res = await songApi.collect(song.value.songId)
+      if (res?.code === 200) {
+        collected.value = true
+        ElMessage.success('收藏成功')
+      }
     }
   } catch (e) {
-    collected.value = !collected.value
+    ElMessage.error('操作失败')
   }
 }
 
