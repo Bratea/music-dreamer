@@ -131,8 +131,9 @@ const init = async () => {
     }
   } catch (e) { /* not logged in */ }
   try {
-    const { data } = await songApi.mySongs(null)
-    songs.value = data?.data || []
+    const res = await songApi.mySongs(null)
+    const d = res?.data || res || []
+    songs.value = Array.isArray(d) ? d : []
   } catch (e) { songs.value = [] }
 }
 
