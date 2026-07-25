@@ -62,37 +62,39 @@
       </div>
       <div v-if="loading" class="loading">加载中...</div>
       <div v-else-if="songs.length === 0" class="empty">暂无歌曲</div>
-      <table v-else class="data-table">
-        <thead>
-          <tr>
-            <th>歌曲名</th>
-            <th>流派</th>
-            <th>状态</th>
-            <th>播放量</th>
-            <th>发布时间</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="s in songs" :key="s.songId">
-            <td>{{ s.name }}</td>
-            <td>{{ s.genre || '-' }}</td>
-            <td>
-              <span :class="['badge', statusClass(s.status)]">
-                {{ statusText(s.status) }}
-              </span>
-            </td>
-            <td>{{ s.playCount }}</td>
-            <td>{{ formatDate(s.createTime) }}</td>
-            <td>
-              <button v-if="s.status === 2" @click="onOffline(s.songId)" class="btn-sm">下架</button>
-              <button v-if="s.status === 0" @click="onResubmit(s.songId)" class="btn-sm btn-primary">重新提交</button>
-              <button v-if="s.status !== 2" @click="onEdit(s)" class="btn-sm">编辑</button>
-              <button @click="onDelete(s.songId)" class="btn-sm btn-danger">删除</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-else class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>歌曲名</th>
+              <th>流派</th>
+              <th>状态</th>
+              <th>播放量</th>
+              <th>发布时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="s in songs" :key="s.songId">
+              <td>{{ s.name }}</td>
+              <td>{{ s.genre || '-' }}</td>
+              <td>
+                <span :class="['badge', statusClass(s.status)]">
+                  {{ statusText(s.status) }}
+                </span>
+              </td>
+              <td>{{ s.playCount }}</td>
+              <td>{{ formatDate(s.createTime) }}</td>
+              <td>
+                <button v-if="s.status === 2" @click="onOffline(s.songId)" class="btn-sm">下架</button>
+                <button v-if="s.status === 0" @click="onResubmit(s.songId)" class="btn-sm btn-primary">重新提交</button>
+                <button v-if="s.status !== 2" @click="onEdit(s)" class="btn-sm">编辑</button>
+                <button @click="onDelete(s.songId)" class="btn-sm btn-danger">删除</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
