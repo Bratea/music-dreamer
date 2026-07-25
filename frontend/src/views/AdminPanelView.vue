@@ -22,6 +22,41 @@
       </div>
     </div>
 
+    <!-- 数据统计图表 -->
+    <div class="card chart-card">
+      <h3>📊 数据统计</h3>
+      <div class="chart-container">
+        <div class="bar-item">
+          <div class="bar-label">用户</div>
+          <div class="bar-track">
+            <div class="bar-fill" :style="{width: barWidth(stats.totalUsers), background: '#46f6e6'}"></div>
+          </div>
+          <div class="bar-value">{{ stats.totalUsers }}</div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">歌曲</div>
+          <div class="bar-track">
+            <div class="bar-fill" :style="{width: barWidth(stats.totalSongs), background: '#925dff'}"></div>
+          </div>
+          <div class="bar-value">{{ stats.totalSongs }}</div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">播放量</div>
+          <div class="bar-track">
+            <div class="bar-fill" :style="{width: barWidth(stats.totalPlayCount), background: '#fbbf24'}"></div>
+          </div>
+          <div class="bar-value">{{ formatCount(stats.totalPlayCount) }}</div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">待审核</div>
+          <div class="bar-track">
+            <div class="bar-fill" :style="{width: barWidth(pendingCount), background: '#fb923c'}"></div>
+          </div>
+          <div class="bar-value">{{ pendingCount }}</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Tabs -->
     <div class="tabs">
       <button :class="{ active: tab === 'songs' }" @click="tab = 'songs'">🎵 歌曲审核</button>
