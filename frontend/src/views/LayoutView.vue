@@ -25,6 +25,12 @@
             <span class="rail-txt">歌手</span>
           </router-link>
         </template>
+        <template v-if="isAdmin || isSinger">
+          <router-link to="/stats" class="rail-link" :class="{ active: $route.path === '/stats' }">
+            <span class="rail-ico">📊</span>
+            <span class="rail-txt">数据</span>
+          </router-link>
+        </template>
         <template v-if="isAdmin">
           <router-link to="/admin" class="rail-link" :class="{ active: $route.path === '/admin' }">
             <span class="rail-ico">🛡</span>
