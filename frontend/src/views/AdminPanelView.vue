@@ -274,6 +274,20 @@ const formatCount = (n) => {
   if (n >= 10000) return (n / 10000).toFixed(1) + '万'
   return n.toString()
 }
+// Calculate bar width percentage relative to the max value
+const maxStat = computed(() => Math.max(
+  stats.totalUsers || 0,
+  stats.totalSongs || 0,
+  stats.totalPlayCount || 0,
+  pendingCount.value || 0,
+  1
+))
+const barWidth = (val) => {
+  const v = val || 0
+  const max = maxStat.value
+  const pct = Math.max((v / max) * 100, 2)
+  return pct + '%'
+}
 </script>
 
 <style scoped>
