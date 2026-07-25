@@ -68,7 +68,9 @@ public class SingerSongController {
         song.setDescription(req.getDescription());
         song.setGenre(req.getGenre());
         song.setLanguage(req.getLanguage());
-        song.setReleaseDate(req.getReleaseDate());
+        // Handle empty releaseDate - MySQL date column doesn't accept empty string
+        String rd = req.getReleaseDate();
+        song.setReleaseDate((rd == null || rd.trim().isEmpty()) ? null : rd);
         song.setPlayCount(0);
         song.setLikeCount(0);
         song.setStatus(2);  // 2 = 审核中
