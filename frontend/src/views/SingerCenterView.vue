@@ -145,15 +145,24 @@ const loadSongs = async () => {
 const onPublish = async () => {
   publishing.value = true
   try {
-    const { data } = await songApi.publish({ ...form })
-    if (data?.code === 200) {
+    const payload = { ...form }
+    console.log('Publishing song:', payload)
+    const res = await songApi.publish(payload)
+    console.log('Publish response:', res)
+    const d = res?.data || res
+    if (d?.code === 200) {
       ElMessage.success('发布成功，进入审核队列')
       form.name = form.url = ''
+      form.cover = form.lyrics = form.description = form.genre = form.language = ''
       loadSongs()
     } else {
-      ElMessage.error(data?.message || '发布失败')
+      console.error('Publish failed:', d)
+      ElMessage.error(d?.message || '发布失败')
     }
-  } catch (e) { ElMessage.error('发布失败') }
+  } catch (e) {
+    console.error('Publish error:', e)
+    ElMessage.error('发布失败: ' + (e?.message || '未知错误'))
+  }
   finally { publishing.value = false }
 }
 
