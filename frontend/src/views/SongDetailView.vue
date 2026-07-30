@@ -165,6 +165,7 @@ onMounted(async () => {
       song.value = data
       document.title = `${data.name} · Music Dreamer`
       loadRelated(data.songId || id)
+      checkCollected()
     }
   } catch (e) {
     song.value = {
