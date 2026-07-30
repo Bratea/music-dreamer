@@ -24,13 +24,15 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
 
     private final UserMapper userMapper;
     private final RoleService roleService;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
-    public AuthServiceImpl(UserMapper userMapper, RoleService roleService, JwtUtils jwtUtils) {
+    public AuthServiceImpl(UserMapper userMapper, RoleService roleService,
+                           JwtUtils jwtUtils, BCryptPasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
         this.roleService = roleService;
         this.jwtUtils = jwtUtils;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
