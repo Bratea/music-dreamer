@@ -33,8 +33,17 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public SearchResult search(SearchRequest request) {
         String keyword = request.getKeyword();
+        if (keyword != null) keyword = keyword.trim();
+        if (keyword == null || keyword.isEmpty()) {
+            SearchResult empty = new SearchResult();
+            empty.setSongs(Collections.emptyList());
+            empty.setTotal(0);
+            empty.setPage(1);
+            empty.setSize(20);
+            return empty;
+        }
         int page = Math.max(request.getPage(), 1);
-        int size = request.getSize();
+        int size = Math.min(Math.max(request.getSize(), 1), 100); // 限制 1~100
 
         List<SongDoc> results = Collections.emptyList();
 
