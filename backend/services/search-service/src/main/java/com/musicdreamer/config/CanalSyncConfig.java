@@ -4,6 +4,7 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
 import com.musicdreamer.service.IndexSyncService;
 import com.musicdreamer.entity.SongDoc;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,6 +14,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Canal Binlog 监听器
@@ -21,12 +23,18 @@ import java.util.concurrent.TimeUnit;
  * 注意：binlog 只携带 song 表的列，singerName / lyrics 需要回查 MySQL 补全，
  * 否则 ES 文档中这些字段为空，搜索不到歌手名和歌词。
  */
+@Slf4j
 @Component
 public class CanalSyncConfig {
 
     private final IndexSyncService indexSyncService;
     private final JdbcTemplate jdbcTemplate;
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "canal-sync");
+        t.setDaemon(true);
+        return t;
+    });
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
     public CanalSyncConfig(IndexSyncService indexSyncService, JdbcTemplate jdbcTemplate) {
         this.indexSyncService = indexSyncService;
@@ -56,29 +64,38 @@ public class CanalSyncConfig {
                     return doc;
                 }, songId);
         } catch (Exception e) {
-            System.err.println("[Canal] enrich failed for songId=" + songId + ": " + e.getMessage());
+            log.warn("[Canal] enrich failed for songId={}: {}", songId, e.getMessage());
             return null;
         }
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void startCanalListener() {
-        String host = System.getenv().getOrDefault("CANAL_HOST", "localhost");
-        int port = Integer.parseInt(System.getenv().getOrDefault("CANAL_PORT", "11111"));
-        String destination = System.getenv().getOrDefault("CANAL_DESTINATION", "music_dreamer");
-        String username = System.getenv().getOrDefault("CANAL_USERNAME", "");
-        String password = System.getenv().getOrDefault("CANAL_PASSWORD", "");
+        if (!running.compareAndSet(false, true)) {
+            log.info("[Canal] listener already running, skip");
+            return;
+        }
+        scheduler.execute(this::runCanalLoop);
+    }
 
-        scheduler.scheduleAtFixedRate(() -> {
+    private void runCanalLoop() {
+        while (running.get()) {
             CanalConnector connector = null;
             try {
+                String host = System.getenv().getOrDefault("CANAL_HOST", "localhost");
+                int port = Integer.parseInt(System.getenv().getOrDefault("CANAL_PORT", "11111"));
+                String destination = System.getenv().getOrDefault("CANAL_DESTINATION", "music_dreamer");
+                String username = System.getenv().getOrDefault("CANAL_USERNAME", "");
+                String password = System.getenv().getOrDefault("CANAL_PASSWORD", "");
+
                 connector = CanalConnectors.newSingleConnector(
                         new InetSocketAddress(host, port), destination, username, password);
                 connector.connect();
                 connector.subscribe(".*\\..*");
                 connector.rollback();
+                log.info("[Canal] connected to {}:{}", host, port);
 
-                while (true) {
+                while (running.get()) {
                     var messages = connector.getWithoutAck(100, 100L, TimeUnit.MILLISECONDS);
                     long batchId = messages.getId();
                     if (batchId == -1 || messages.getEntries().isEmpty()) {
@@ -112,12 +129,22 @@ public class CanalSyncConfig {
                     }
                     connector.ack(batchId);
                 }
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                log.info("[Canal] listener interrupted");
+                break;
             } catch (Exception e) {
-                System.err.println("[Canal] Error: " + e.getMessage());
+                log.error("[Canal] connection error, retry in 10s: {}", e.getMessage());
             } finally {
-                if (connector != null) connector.disconnect();
-                try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                if (connector != null) {
+                    try { connector.disconnect(); } catch (Exception ignored) {}
+                }
             }
-        }, 5, 5, TimeUnit.SECONDS);
+            // 连接断开后等待重连，避免疯狂重试
+            if (running.get()) {
+                try { Thread.sleep(10_000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); break; }
+            }
+        }
+        log.info("[Canal] listener stopped");
     }
 }
