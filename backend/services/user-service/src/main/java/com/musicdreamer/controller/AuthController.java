@@ -50,6 +50,20 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/refresh")
+    @Operation(summary = "刷新访问令牌", description = "使用 refreshToken 换取新的 accessToken")
+    public CommonResult<LoginResponse> refresh(@RequestBody Map<String, String> body) {
+        try {
+            String refreshToken = body.get("refreshToken");
+            if (refreshToken == null || refreshToken.isBlank()) {
+                return CommonResult.error(400, "refreshToken 不能为空");
+            }
+            return CommonResult.success(authService.refreshToken(refreshToken));
+        } catch (RuntimeException e) {
+            return CommonResult.error(401, e.getMessage());
+        }
+    }
+
     @GetMapping("/user/info")
     @Operation(summary = "获取当前用户信息")
     public CommonResult<UserInfoResponse> getUserInfo(HttpServletRequest request) {
