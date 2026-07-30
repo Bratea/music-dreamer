@@ -55,14 +55,14 @@ public class SearchServiceImpl implements SearchService {
             Query boolQuery = Query.of(q -> q.bool(b -> b
                     .should(s -> s.multiMatch(mm -> mm
                             .fields("name^3", "singerName^2", "lyrics", "genre")
-                            .query(keyword)
+                            .query(searchKeyword)
                             .fuzziness("AUTO")))
                     .should(s -> s.wildcard(w -> w
                             .field("name")
-                            .value("*" + keyword + "*")))
+                            .value("*" + searchKeyword + "*")))
                     .should(s -> s.wildcard(w -> w
                             .field("singerName")
-                            .value("*" + keyword + "*")))
+                            .value("*" + searchKeyword + "*")))
             ));
             builder.withQuery(boolQuery);
             // 一次性拉取当前页所需数据（ES 深度分页建议用 search_after，此处数据量小用 from/size）
