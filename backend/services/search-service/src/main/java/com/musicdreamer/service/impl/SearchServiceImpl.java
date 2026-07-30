@@ -64,7 +64,8 @@ public class SearchServiceImpl implements SearchService {
                             .value("*" + keyword + "*")))
             ));
             builder.withQuery(boolQuery);
-            builder.withPageable(PageRequest.of(0, 100));
+            // 一次性拉取当前页所需数据（ES 深度分页建议用 search_after，此处数据量小用 from/size）
+            builder.withPageable(PageRequest.of(0, size * page));
             SearchHits<SongDoc> searchHits = elasticsearchOperations.search(builder.build(), SongDoc.class);
             results = searchHits.getSearchHits().stream()
                     .map(h -> h.getContent())
