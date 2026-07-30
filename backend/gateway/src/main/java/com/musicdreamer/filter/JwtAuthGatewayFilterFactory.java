@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -18,15 +19,23 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class JwtAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
-    private static final String SECRET = "musicdreamer2025secretkeymusicdreamer2025secret";
-    private static final SecretKey KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+    @Value("${jwt.secret}")
+    private String secret;
+
+    private volatile SecretKey key;
+
+    private SecretKey getKey() {
+        if (key == null) {
+            key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        }
+        return key;
+    }
 
     @Override
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             String path = exchange.getRequest().getPath().value();
             // Skip auth for public paths only
-            // Note: /api/song/collect/* requires auth, so we only skip specific public song endpoints
             if (path.startsWith("/api/auth/")
                 || path.startsWith("/api/search/")
                 || path.startsWith("/api/playlist/")
@@ -49,7 +58,7 @@ public class JwtAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Ob
             try {
                 String token = authHeader.substring(7);
                 Claims claims = Jwts.parser()
-                        .verifyWith(KEY)
+                        .verifyWith(getKey())
                         .build()
                         .parseSignedClaims(token)
                         .getPayload();
