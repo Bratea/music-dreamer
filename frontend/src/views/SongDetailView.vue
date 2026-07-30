@@ -123,7 +123,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { songApi } from '../api'
+import { songApi, meApi } from '../api'
 import { usePlayerStore } from '../store/player'
 import { ElMessage } from 'element-plus'
 
