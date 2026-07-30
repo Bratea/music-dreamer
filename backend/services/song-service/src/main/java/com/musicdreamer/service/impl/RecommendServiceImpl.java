@@ -65,6 +65,7 @@ public class RecommendServiceImpl implements RecommendService {
             vo.setCreateTime(song.getCreateTime());
             vo.setUpdateTime(song.getUpdateTime());
             vo.setSingerName(singerNameMap.getOrDefault(song.getSingerId(), ""));
+            // albumName 暂不补全，需要时可通过 albumId 回查
             return vo;
         }).collect(Collectors.toList());
     }
