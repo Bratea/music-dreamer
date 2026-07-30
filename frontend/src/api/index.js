@@ -77,15 +77,3 @@ export const adminApi = {
   statsDaily: () => request.get('/admin/stats/daily'),
 }
 
-/** @deprecated 使用 meApi 替代，由 playlist-service 承载 */
-export const userApi = {
-  getHistory: (limit = 50) => request.get('/me/history', { params: { limit } }),
-  clearHistory: () => request.delete('/me/history'),
-  getCollections: (targetType) => request.get('/me/collections', { params: { targetType } }),
-  getNotifications: () => request.get('/me/notifications'),
-  markNotificationRead: (id) => request.put(`/me/notification/${id}/read`),
-  followSinger: (singerId) => request.post('/me/follow', { singerId }),
-  unfollowSinger: (singerId) => request.delete(`/me/follow/${singerId}`),
-  getFollowing: () => request.get('/me/following'),
-  isFollowing: (singerId) => request.get(`/me/follow/${singerId}`),
-}
