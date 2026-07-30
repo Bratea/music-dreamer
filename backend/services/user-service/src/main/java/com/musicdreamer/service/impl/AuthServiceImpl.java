@@ -97,6 +97,39 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         return toUserInfo(user);
     }
 
+    @Override
+    public LoginResponse refreshToken(String refreshToken) {
+        Claims claims = jwtUtils.parseToken(refreshToken);
+        String userId = claims.getSubject();
+        if (userId == null) {
+            throw new RuntimeException("无效的刷新令牌");
+        }
+        User user = getById(Long.valueOf(userId));
+        if (user == null || user.getStatus() != 1) {
+            throw new RuntimeException("用户不存在或已被禁用");
+        }
+        Map<String, Object> newClaims = new HashMap<>();
+        newClaims.put("userId", user.getUserId());
+        newClaims.put("username", user.getUsername());
+        newClaims.put("sub", String.valueOf(user.getUserId()));
+        List<String> roles = roleService.getRoleCodesByUserId(user.getUserId());
+        newClaims.put("roles", String.join(",", roles));
+
+        String newAccessToken = jwtUtils.generateAccessToken(newClaims);
+        String newRefreshToken = jwtUtils.generateRefreshToken(newClaims);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(newAccessToken);
+        response.setRefreshToken(newRefreshToken);
+        response.setUserId(user.getUserId());
+        response.setUsername(user.getUsername());
+        response.setNickname(user.getNickname());
+        response.setAvatar(user.getAvatar());
+        response.setExpireIn(jwtUtils.getExpiration());
+        response.setRoles(roles);
+        return response;
+    }
+
     private UserInfoResponse toUserInfo(User user) {
         UserInfoResponse resp = new UserInfoResponse();
         resp.setUserId(user.getUserId());
