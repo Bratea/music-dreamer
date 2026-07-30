@@ -21,6 +21,10 @@ export const usePlayerStore = defineStore('player', () => {
   function loadSong(song) {
     currentSong.value = song
     isPlaying.value = true
+    // 上报播放量（异步，不阻塞播放）
+    if (song?.songId) {
+      songApi.play(song.songId).catch(() => {})
+    }
     nextTick(() => audioEl.value?.play())
   }
 

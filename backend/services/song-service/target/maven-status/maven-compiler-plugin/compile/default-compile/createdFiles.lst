@@ -1,6 +1,5 @@
 com\musicdreamer\mapper\SingerMapper.class
 com\musicdreamer\config\GatewayHeaderFilter.class
-com\musicdreamer\config\JacksonConfig.class
 com\musicdreamer\controller\SongAuditController.class
 com\musicdreamer\config\RedissonConfig.class
 com\musicdreamer\dto\PlayCountRequest.class
