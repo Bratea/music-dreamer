@@ -33,7 +33,7 @@ export const usePlayerStore = defineStore('player', () => {
         currentIndex.value = playlist.value.length - 1
       }
     }
-    nextTick(() => audioEl.value?.play())
+    nextTick(() => audioEl.value?.play?.().catch(() => { isPlaying.value = false }))
   }
 
   // 加载整个列表并播放第一首（用于"播放全部"）
