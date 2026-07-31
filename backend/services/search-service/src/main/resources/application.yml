@@ -28,11 +28,6 @@ spring:
     username: ${MYSQL_USER:music}
     password: ${MYSQL_PASSWORD:music123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
 
 logging:
   level:
