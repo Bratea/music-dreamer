@@ -48,7 +48,10 @@ public class PlaylistController {
 
     @PostMapping
     @Operation(summary = "创建歌单", description = "status=1 公开, 0 私密")
-    public CommonResult<Boolean> create(@Valid @RequestBody Playlist playlist) {
+    public CommonResult<Boolean> create(@RequestAttribute("userId") Long userId,
+                                        @Valid @RequestBody Playlist playlist) {
+        // 从认证身份获取 userId，不信任请求体中的 userId（防越权）
+        playlist.setUserId(userId);
         playlist.setPlayCount(0);
         playlist.setSongCount(0);
         return CommonResult.success(playlistService.save(playlist));
@@ -56,13 +59,26 @@ public class PlaylistController {
 
     @PutMapping
     @Operation(summary = "更新歌单信息")
-    public CommonResult<Boolean> update(@Valid @RequestBody Playlist playlist) {
+    public CommonResult<Boolean> update(@RequestAttribute("userId") Long userId,
+                                        @Valid @RequestBody Playlist playlist) {
+        // 校验歌单归属，防止修改他人歌单
+        Playlist existing = playlistService.getById(playlist.getPlaylistId());
+        if (existing == null) return CommonResult.error("歌单不存在");
+        if (!existing.getUserId().equals(userId)) {
+            return CommonResult.error("无权操作该歌单");
+        }
         return CommonResult.success(playlistService.updateById(playlist));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除歌单", description = "同时删除歌单歌曲关联")
-    public CommonResult<Boolean> delete(@PathVariable Long id) {
+    public CommonResult<Boolean> delete(@RequestAttribute("userId") Long userId,
+                                        @PathVariable Long id) {
+        Playlist existing = playlistService.getById(id);
+        if (existing == null) return CommonResult.error("歌单不存在");
+        if (!existing.getUserId().equals(userId)) {
+            return CommonResult.error("无权操作该歌单");
+        }
         boolean ok = playlistService.removeById(id);
         playlistSongService.lambdaUpdate().eq(PlaylistSong::getPlaylistId, id).remove();
         return CommonResult.success(ok);
@@ -72,8 +88,15 @@ public class PlaylistController {
 
     @PostMapping("/{playlistId}/song/{songId}")
     @Operation(summary = "向歌单添加歌曲")
-    public CommonResult<Boolean> addSong(@PathVariable Long playlistId, @PathVariable Long songId,
+    public CommonResult<Boolean> addSong(@RequestAttribute("userId") Long userId,
+                                         @PathVariable Long playlistId, @PathVariable Long songId,
                                          @RequestParam(defaultValue = "0") Integer sort) {
+        // 校验歌单归属
+        Playlist existing = playlistService.getById(playlistId);
+        if (existing == null) return CommonResult.error("歌单不存在");
+        if (!existing.getUserId().equals(userId)) {
+            return CommonResult.error("无权操作该歌单");
+        }
         PlaylistSong ps = new PlaylistSong();
         ps.setPlaylistId(playlistId);
         ps.setSongId(songId);
@@ -90,7 +113,14 @@ public class PlaylistController {
 
     @DeleteMapping("/{playlistId}/song/{songId}")
     @Operation(summary = "从歌单移除歌曲")
-    public CommonResult<Boolean> removeSong(@PathVariable Long playlistId, @PathVariable Long songId) {
+    public CommonResult<Boolean> removeSong(@RequestAttribute("userId") Long userId,
+                                            @PathVariable Long playlistId, @PathVariable Long songId) {
+        // 校验歌单归属
+        Playlist existing = playlistService.getById(playlistId);
+        if (existing == null) return CommonResult.error("歌单不存在");
+        if (!existing.getUserId().equals(userId)) {
+            return CommonResult.error("无权操作该歌单");
+        }
         boolean ok = playlistSongService.lambdaUpdate()
                 .eq(PlaylistSong::getPlaylistId, playlistId)
                 .eq(PlaylistSong::getSongId, songId)
@@ -110,10 +140,13 @@ public class PlaylistController {
     @Operation(summary = "热门歌单", description = "按播放量 Top 50")
     public CommonResult<List<Playlist>> getHotPlaylists(@RequestParam(value = "page", defaultValue = "1") int page,
                                                          @RequestParam(value = "size", defaultValue = "10") int size) {
+        // 限制 size 上限，防止请求过大导致性能问题
+        int safeSize = Math.min(Math.max(size, 1), 100);
+        int safePage = Math.max(page, 1);
         List<Playlist> list = playlistService.lambdaQuery()
                 .eq(Playlist::getStatus, 1)
                 .orderByDesc(Playlist::getPlayCount)
-                .last("LIMIT " + (page - 1) * size + ", " + size)
+                .last("LIMIT " + (safePage - 1) * safeSize + ", " + safeSize)
                 .list();
         return CommonResult.success(list);
     }
