@@ -145,6 +145,7 @@ const collected = ref(false)
 const showLyricsFullscreen = ref(false)
 const relatedSongs = ref([])
 const relatedLoading = ref(false)
+const loadError = ref(false)
 
 const loadRelated = async (id) => {
   relatedLoading.value = true
