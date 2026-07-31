@@ -174,10 +174,9 @@ public class AdminController {
         resp.setTotalUsers(userService.count());
         CommonResult<Long> countResult = songFeignClient.count();
         resp.setTotalSongs(countResult.getData() != null ? countResult.getData() : 0L);
-        CommonResult<List<Song>> listResult = songFeignClient.listAll();
-        resp.setTotalPlayCount(listResult.getData() != null ? listResult.getData().stream()
-                .mapToLong(s -> s.getPlayCount() != null ? s.getPlayCount() : 0)
-                .sum() : 0L);
+        // 通过专用聚合接口获取总播放量，避免加载全表到内存
+        CommonResult<Long> playCountResult = songFeignClient.totalPlayCount();
+        resp.setTotalPlayCount(playCountResult.getData() != null ? playCountResult.getData() : 0L);
         resp.setTotalFollowers(0L);
         return CommonResult.success(resp);
     }
