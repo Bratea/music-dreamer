@@ -85,8 +85,9 @@ public class SongController {
         Long count = redisTemplate.opsForValue().increment(key);
         if (count == 1) redisTemplate.expire(key, 6, java.util.concurrent.TimeUnit.HOURS);
         // 仅递增 Redis 计数器；DB 持久化由定时任务统一 flush，避免每次请求写 DB
-        // 返回 DB 真实累计播放量 + 当前窗口增量
-        Long totalPlayCount = songService.getById(id) != null ? songService.getById(id).getPlayCount() : 0L;
+        // 返回 DB 真实累计播放量 + 当前窗口增量（仅查询一次，避免重复读取）
+        Song dbSong = songService.getById(id);
+        Long totalPlayCount = dbSong != null && dbSong.getPlayCount() != null ? dbSong.getPlayCount() : 0L;
         return CommonResult.success(Map.of("songId", id, "playCount", totalPlayCount + count));
     }
 
