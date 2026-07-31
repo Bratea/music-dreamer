@@ -93,6 +93,20 @@ public class UserInteractionController {
     // 播放历史
     // ═══════════════════════════════════════
 
+    @PostMapping("/history/record")
+    @Operation(summary = "记录播放历史", description = "Body: {songId, playDuration?}，由前端播放时调用")
+    public CommonResult<Boolean> recordHistory(
+            @RequestAttribute("userId") Long userId,
+            @RequestBody Map<String, Object> body) {
+        Object sid = body.get("songId");
+        if (sid == null) return CommonResult.error("songId 不能为空");
+        Long songId = Long.valueOf(sid.toString());
+        Integer playDuration = body.get("playDuration") == null ? 0
+                : Integer.valueOf(body.get("playDuration").toString());
+        userHistoryService.recordHistory(userId, songId, playDuration);
+        return CommonResult.success(true);
+    }
+
     @GetMapping("/history")
     @Operation(summary = "我的播放历史", description = "默认返回最近 50 条")
     public CommonResult<List<UserHistory>> history(
