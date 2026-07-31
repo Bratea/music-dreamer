@@ -1,5 +1,6 @@
 package com.musicdreamer.service;
 
+import com.musicdreamer.config.RabbitMQConfig;
 import com.musicdreamer.dto.SongDTO;
 import com.musicdreamer.entity.SongPublishEvent;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,7 +15,8 @@ public class SongEventPublisher {
     @Value("${rabbitmq.exchange:music.exchange}")
     private String exchange;
 
-    @Value("${rabbitmq.routing.publish:queue.song.publish}")
+    // 默认 routing key 必须与 RabbitMQConfig 中的 binding key (song.publish) 一致，否则消息被交换器静默丢弃
+    @Value("${rabbitmq.routing.publish:song.publish}")
     private String routingKey;
 
     public SongEventPublisher(RabbitTemplate rabbitTemplate) {
