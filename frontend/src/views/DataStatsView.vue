@@ -73,8 +73,7 @@ const stats = ref({ totalUsers: 0, totalSongs: 0, totalPlayCount: 0, totalFollow
 const dailyStats = ref([])
 
 onMounted(async () => {
-  await loadStats()
-  await loadDaily()
+  await Promise.all([loadStats(), loadDaily(), loadPendingCount()])
 })
 
 const loadStats = async () => {
