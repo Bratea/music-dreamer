@@ -169,6 +169,8 @@ const modeLabel = computed(() => ({
 
 onMounted(() => {
   player.setAudio(audioRef.value)
+  // 应用持久化的音量，避免首次加载时 audio 元素以 100% 音量播放
+  if (audioRef.value) audioRef.value.volume = player.volume / 100
   loadUserInfo()
 })
 
