@@ -48,7 +48,7 @@ public class CanalSyncConfig {
                 "SELECT s.song_id, s.name, IFNULL(si.name,'') AS singer_name, " +
                 "       IFNULL(s.lyrics,'') AS lyrics, IFNULL(s.genre,'') AS genre, " +
                 "       IFNULL(s.language,'') AS language, IFNULL(s.play_count,0) AS play_count, " +
-                "       IFNULL(DATE_FORMAT(s.release_date,'%Y-%m-%d'),'') AS release_date " +
+                "       DATE_FORMAT(s.release_date,'%Y-%m-%d') AS release_date " +
                 "FROM song s LEFT JOIN singer si ON s.singer_id = si.singer_id " +
                 "WHERE s.song_id = ?",
                 (rs, rowNum) -> {
@@ -60,6 +60,7 @@ public class CanalSyncConfig {
                     doc.setGenre(rs.getString("genre"));
                     doc.setLanguage(rs.getString("language"));
                     doc.setPlayCount(rs.getInt("play_count"));
+                    // release_date 为 NULL 时返回 null（而非空字符串），避免 ES Date 字段解析失败
                     doc.setReleaseDate(rs.getString("release_date"));
                     return doc;
                 }, songId);
