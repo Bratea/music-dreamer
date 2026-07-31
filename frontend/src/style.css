@@ -296,7 +296,6 @@ a:focus-visible {
   content: "";
   position: absolute;
   left: 0.85rem;
-  50%;
   top: 50%;
   transform: translateY(-50%);
   width: 0.5rem;
