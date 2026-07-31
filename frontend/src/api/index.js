@@ -18,6 +18,7 @@ export const singerApi = {
 
 export const songApi = {
   getById: (id) => request.get(`/song/${id}`),
+  getByIds: (ids) => request.get('/song/batch', { params: { ids: ids.join(',') } }),
   search: (params) => request.get('/search', { params }),
   getHot: (page = 1, size = 10) => request.get('/song/hot', { params: { page, size } }),
   getNew: (page = 1, size = 10) => request.get('/song/new', { params: { page, size } }),
