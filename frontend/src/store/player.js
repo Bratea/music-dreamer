@@ -65,6 +65,7 @@ export const usePlayerStore = defineStore('player', () => {
   }
 
   function next() {
+    if (!playlist.value.length) return
     if (playMode.value === 'random') {
       const idx = Math.floor(Math.random() * playlist.value.length)
       play(idx)
