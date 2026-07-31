@@ -207,28 +207,28 @@ const loadUsers = async () => {
 }
 
 const auditPass = async (id) => {
-  const { data } = await adminApi.auditPass(id)
-  data?.code === 200 ? (ElMessage.success('已通过'), loadPendingSongs(), loadStats()) : ElMessage.error('操作失败')
+  const res = await adminApi.auditPass(id)
+  res?.code === 200 ? (ElMessage.success('已通过'), loadPendingSongs(), loadStats()) : ElMessage.error('操作失败')
 }
 const showReject = (id) => { rejectSongId.value = id; rejectReason.value = '' }
 const confirmReject = async () => {
   if (!rejectReason.value.trim()) return ElMessage.warning('请填写拒绝原因')
-  const { data } = await adminApi.auditReject(rejectSongId.value, rejectReason.value)
-  data?.code === 200 ? (ElMessage.success('已拒绝'), rejectSongId.value = null, loadPendingSongs()) : ElMessage.error('操作失败')
+  const res = await adminApi.auditReject(rejectSongId.value, rejectReason.value)
+  res?.code === 200 ? (ElMessage.success('已拒绝'), rejectSongId.value = null, loadPendingSongs()) : ElMessage.error('操作失败')
 }
 const approveApply = async (id) => {
-  const { data } = await singerApi.approveApply(id)
-  data?.code === 200 ? (ElMessage.success('已通过'), loadPendingApplies()) : ElMessage.error('操作失败')
+  const res = await singerApi.approveApply(id)
+  res?.code === 200 ? (ElMessage.success('已通过'), loadPendingApplies()) : ElMessage.error('操作失败')
 }
 const rejectApply = async (id) => {
   const reason = prompt('请输入拒绝原因：')
   if (!reason) return
-  const { data } = await singerApi.rejectApply(id, reason)
-  data?.code === 200 ? (ElMessage.success('已拒绝'), loadPendingApplies()) : ElMessage.error('操作失败')
+  const res = await singerApi.rejectApply(id, reason)
+  res?.code === 200 ? (ElMessage.success('已拒绝'), loadPendingApplies()) : ElMessage.error('操作失败')
 }
 const toggleUserStatus = async (id, status) => {
-  const { data } = await adminApi.disableUser(id, status)
-  data?.code === 200 ? (ElMessage.success(status === 0 ? '已封禁' : '已解封'), loadUsers()) : ElMessage.error('操作失败')
+  const res = await adminApi.disableUser(id, status)
+  res?.code === 200 ? (ElMessage.success(status === 0 ? '已封禁' : '已解封'), loadUsers()) : ElMessage.error('操作失败')
 }
 const playSong = (s) => { playingSong.value = playingSong.value?.songId === s.songId ? null : s }
 const formatDate = (t) => t ? new Date(t).toLocaleDateString() : '-'
