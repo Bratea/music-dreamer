@@ -51,7 +51,9 @@ public class UserInteractionController {
     public CommonResult<Map<String, Object>> collect(
             @RequestAttribute("userId") Long userId,
             @RequestBody Map<String, Object> body) {
-        Long targetId = Long.valueOf(body.get("targetId").toString());
+        Object tid = body.get("targetId");
+        if (tid == null) return CommonResult.error("targetId 不能为空");
+        Long targetId = Long.valueOf(tid.toString());
         Integer targetType = body.get("targetType") == null ? 1
                 : Integer.valueOf(body.get("targetType").toString());
         boolean collected = userCollectService.toggleCollect(userId, targetId, targetType);
