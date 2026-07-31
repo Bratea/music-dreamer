@@ -104,8 +104,11 @@ public class SingerSongController {
     @Operation(summary = "编辑歌曲信息（仅审核中的歌曲可改）")
     public CommonResult<Boolean> edit(@PathVariable Long id, @RequestBody Song song) {
         song.setSongId(id);
+        Song existing = songService.getById(id);
+        if (existing == null) {
+            return CommonResult.error("歌曲不存在");
+        }
         if (song.getStatus() == null) {
-            Song existing = songService.getById(id);
             song.setStatus(existing.getStatus());
         }
         return CommonResult.success(songService.updateById(song));
