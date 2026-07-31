@@ -43,7 +43,30 @@ public class SongController {
     @PutMapping
     @Operation(summary = "更新歌曲信息")
     public CommonResult<Boolean> update(@Valid @RequestBody Song song) {
-        return CommonResult.success(songService.updateById(song));
+        // 防止 updateById 将请求中未传的字段覆写为 null（数据丢失）
+        Song existing = songService.getById(song.getSongId());
+        if (existing == null) {
+            return CommonResult.error("歌曲不存在");
+        }
+        // 仅覆盖请求中显式提供的字段，其余保留原值
+        mergeSongFields(song, existing);
+        return CommonResult.success(songService.updateById(existing));
+    }
+
+    /** 将 source 中非 null 字段复制到 target，避免全字段覆写导致数据丢失 */
+    private void mergeSongFields(Song source, Song target) {
+        if (source.getName() != null) target.setName(source.getName());
+        if (source.getSingerId() != null) target.setSingerId(source.getSingerId());
+        if (source.getAlbumId() != null) target.setAlbumId(source.getAlbumId());
+        if (source.getDuration() != null) target.setDuration(source.getDuration());
+        if (source.getUrl() != null) target.setUrl(source.getUrl());
+        if (source.getCover() != null) target.setCover(source.getCover());
+        if (source.getLyrics() != null) target.setLyrics(source.getLyrics());
+        if (source.getDescription() != null) target.setDescription(source.getDescription());
+        if (source.getGenre() != null) target.setGenre(source.getGenre());
+        if (source.getLanguage() != null) target.setLanguage(source.getLanguage());
+        if (source.getReleaseDate() != null) target.setReleaseDate(source.getReleaseDate());
+        if (source.getStatus() != null) target.setStatus(source.getStatus());
     }
 
     @DeleteMapping("/{id}")
