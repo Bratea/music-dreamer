@@ -111,7 +111,23 @@ public class SingerSongController {
         if (song.getStatus() == null) {
             song.setStatus(existing.getStatus());
         }
-        return CommonResult.success(songService.updateById(song));
+        // 防止 updateById 将请求中未传的字段覆写为 null（数据丢失）
+        mergeSongFields(song, existing);
+        return CommonResult.success(songService.updateById(existing));
+    }
+
+    /** 将 source 中非 null 字段复制到 target，避免全字段覆写导致数据丢失 */
+    private void mergeSongFields(Song source, Song target) {
+        if (source.getName() != null) target.setName(source.getName());
+        if (source.getAlbumId() != null) target.setAlbumId(source.getAlbumId());
+        if (source.getDuration() != null) target.setDuration(source.getDuration());
+        if (source.getUrl() != null) target.setUrl(source.getUrl());
+        if (source.getCover() != null) target.setCover(source.getCover());
+        if (source.getLyrics() != null) target.setLyrics(source.getLyrics());
+        if (source.getDescription() != null) target.setDescription(source.getDescription());
+        if (source.getGenre() != null) target.setGenre(source.getGenre());
+        if (source.getLanguage() != null) target.setLanguage(source.getLanguage());
+        if (source.getReleaseDate() != null) target.setReleaseDate(source.getReleaseDate());
     }
 
     @DeleteMapping("/{id}")
