@@ -127,7 +127,7 @@
           <span class="pl-vol-ico">🔊</span>
           <input type="range" min="0" max="100" v-model="player.volume" @input="onVolume" class="pl-vol" />
         </div>
-        <audio ref="audioRef" :src="currentSong?.url" @timeupdate="onTimeUpdate"></audio>
+        <audio ref="audioRef" :src="currentSong?.url"></audio>
       </footer>
     </div>
   </div>
