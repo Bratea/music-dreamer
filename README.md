@@ -142,7 +142,7 @@ cd docker && docker-compose up -d
 | 歌单服务 | 8083 | 歌单 + 收藏 + 历史 + 通知 |
 | 搜索服务 | 8084 | ES 全文检索 |
 | 歌曲处理服务 | 8085 | RabbitMQ 消费者 |
-| MySQL | 3306 | root/root123456 |
+| MySQL | 3307 | root/root123456（docker-compose 映射 3307→3306） |
 | Redis | 6379 | requirepass redis123456 |
 | Elasticsearch | 9200 | 单节点开发模式 |
 | Nacos | 8848 | 控制台 http://localhost:8848/nacos |
