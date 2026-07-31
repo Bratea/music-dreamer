@@ -44,12 +44,13 @@ request.interceptors.response.use(
         } catch {
           localStorage.removeItem('token')
           localStorage.removeItem('refreshToken')
-          window.location.href = '/#/login'
+          // 路由使用 history 模式，应跳转到 /login 而非 /#/login
+          window.location.href = '/login'
           return Promise.reject(err)
         }
       } else {
         localStorage.removeItem('token')
-        window.location.href = '/#/login'
+        window.location.href = '/login'
       }
     }
     return Promise.reject(err)
