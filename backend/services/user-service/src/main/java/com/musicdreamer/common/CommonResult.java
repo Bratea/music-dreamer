@@ -20,6 +20,10 @@ public class CommonResult<T> {
         return new CommonResult<>(200, message, data);
     }
 
+    public static <T> CommonResult<T> error(String message) {
+        return new CommonResult<>(500, message, null);
+    }
+
     public static <T> CommonResult<T> error(int code, String message) {
         return new CommonResult<>(code, message, null);
     }
