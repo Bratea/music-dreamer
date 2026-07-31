@@ -193,7 +193,6 @@ const logout = () => {
   router.push('/')
 }
 
-const onTimeUpdate = () => { player.currentTime = audioRef.value?.currentTime || 0 }
 const seek = (e) => {
   const bar = e.currentTarget
   // 使用 clientX 相对于 bar 左边缘计算，避免点击子元素（fill/thumb）时 offsetX 偏差
