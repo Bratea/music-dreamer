@@ -102,7 +102,7 @@ onMounted(async () => {
 })
 
 const playAll = () => {
-  if (songs.value.length) player.loadSong(songs.value[0])
+  if (songs.value.length) player.loadPlaylist(songs.value, 0)
 }
 
 const shufflePlay = () => {
