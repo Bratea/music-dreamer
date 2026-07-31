@@ -94,10 +94,13 @@ public class RecommendServiceImpl implements RecommendService {
                 // Redis unavailable, ignore cache write
             }
         }
-        int from = (page - 1) * size;
-        int to = Math.min(from + size, songs.size());
+        // 防御非法页码，避免负数 index 导致 IndexOutOfBoundsException
+        int safePage = Math.max(page, 1);
+        int safeSize = Math.max(size, 1);
+        int from = (safePage - 1) * safeSize;
+        int to = Math.min(from + safeSize, songs.size());
         return Map.of("songs", from < to ? songs.subList(from, to) : List.of(),
-                "total", songs.size(), "page", page, "size", size);
+                "total", songs.size(), "page", safePage, "size", safeSize);
     }
 
     @Override

@@ -8,6 +8,7 @@ com\musicdreamer\service\impl\IndexSyncServiceImpl.class
 com\musicdreamer\repository\SongDocRepository.class
 com\musicdreamer\config\CanalSyncConfig.class
 com\musicdreamer\dto\SearchRequest.class
+com\musicdreamer\service\impl\SearchServiceImpl.class
 com\musicdreamer\dto\SearchResult$PlaylistItem.class
 com\musicdreamer\service\SearchService.class
 com\musicdreamer\dto\SearchResult.class
