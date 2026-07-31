@@ -164,16 +164,19 @@ public class RecommendServiceImpl implements RecommendService {
 
     @Override
     public Map<String, Object> getNewSongs(int page, int size) {
+        // 限制 size 和 page 上限，防止 LIMIT 过大
+        int safeSize = Math.min(Math.max(size, 1), 100);
+        int safePage = Math.max(page, 1);
         var songs = songMapper.selectList(
                 new LambdaQueryWrapper<Song>()
                         .eq(Song::getStatus, 1)
                         .orderByDesc(Song::getReleaseDate)
-                        .last("LIMIT " + ((page - 1) * size + size))
+                        .last("LIMIT " + ((safePage - 1) * safeSize + safeSize))
         );
-        int from = (page - 1) * size;
-        int to = Math.min(from + size, songs.size());
+        int from = (safePage - 1) * safeSize;
+        int to = Math.min(from + safeSize, songs.size());
         return Map.of("songs", from < to ? toSongVOs(songs).subList(from, to) : List.of(),
-                "total", songs.size(), "page", page, "size", size);
+                "total", songs.size(), "page", safePage, "size", safeSize);
     }
 
     @Override
