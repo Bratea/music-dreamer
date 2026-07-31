@@ -21,9 +21,16 @@ export const usePlayerStore = defineStore('player', () => {
   function loadSong(song) {
     currentSong.value = song
     isPlaying.value = true
-    // 上报播放量（异步，不阻塞播放）
+    // 将歌曲加入播放列表（如不存在），并更新 currentIndex，使 prev/next/播放模式生效
     if (song?.songId) {
       songApi.play(song.songId).catch(() => {})
+      const existingIdx = playlist.value.findIndex(s => s.songId === song.songId)
+      if (existingIdx >= 0) {
+        currentIndex.value = existingIdx
+      } else {
+        playlist.value.push(song)
+        currentIndex.value = playlist.value.length - 1
+      }
     }
     nextTick(() => audioEl.value?.play())
   }
