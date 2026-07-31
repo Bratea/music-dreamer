@@ -25,11 +25,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public List<String> getRoleCodesByUserId(Long userId) {
         List<UserRole> userRoles = userRoleMapper.selectList(
                 new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, userId));
-        return userRoles.stream()
-                .map(ur -> getById(ur.getRoleId()))
-                .filter(r -> r != null)
-                .map(Role::getRoleCode)
-                .collect(Collectors.toList());
+        // 批量查询角色，避免 N+1
+        List<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).distinct().toList();
+        if (roleIds.isEmpty()) return List.of();
+        List<Role> roles = listByIds(roleIds);
+        return roles.stream().map(Role::getRoleCode).toList();
     }
 
     @Override
