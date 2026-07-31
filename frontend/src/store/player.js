@@ -48,7 +48,7 @@ export const usePlayerStore = defineStore('player', () => {
       songApi.play(first.songId).catch(() => {})
       meApi.recordHistory(first.songId).catch(() => {})
     }
-    nextTick(() => audioEl.value?.play())
+    nextTick(() => audioEl.value?.play?.().catch(() => { isPlaying.value = false }))
   }
 
   function play(index) {
