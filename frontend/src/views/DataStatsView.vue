@@ -18,7 +18,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-label">待审核</div>
-        <div class="stat-value" style="color:#fb923c">{{ stats.totalUsers > 0 ? 0 : 0 }}</div>
+        <div class="stat-value" style="color:#fb923c">{{ stats.pendingCount }}</div>
       </div>
     </div>
 
