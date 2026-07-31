@@ -33,7 +33,7 @@
         </div>
         <div class="form-row">
           <label>歌手名</label>
-          <input v-model="form.intro" placeholder="艺名 / 简介" />
+          <input v-model="form.stageName" placeholder="艺名 / 歌手名" />
         </div>
         <div class="form-row">
           <label>性别</label>
