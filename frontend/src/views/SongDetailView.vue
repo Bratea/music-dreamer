@@ -165,9 +165,10 @@ const formatCount = (n) => {
   return n > 10000 ? (n / 10000).toFixed(1) + 'w' : n
 }
 
-onMounted(async () => {
-  document.title = '歌曲详情 · Music Dreamer'
+const loadSong = async () => {
   const id = route.params.id
+  loadError.value = false
+  song.value = null
   try {
     const res = await songApi.getById(id)
     const data = res?.data || res
@@ -176,12 +177,19 @@ onMounted(async () => {
       document.title = `${data.name} · Music Dreamer`
       loadRelated(data.songId || id)
       checkCollected()
+    } else {
+      loadError.value = true
     }
   } catch (e) {
     // API 失败时显示错误状态，而非渲染假数据误导用户
     loadError.value = true
     console.error('加载歌曲详情失败:', e)
   }
+}
+
+onMounted(async () => {
+  document.title = '歌曲详情 · Music Dreamer'
+  await loadSong()
 })
 
 const onPlay = () => {
