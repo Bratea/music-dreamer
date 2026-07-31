@@ -36,6 +36,21 @@ export const usePlayerStore = defineStore('player', () => {
     nextTick(() => audioEl.value?.play())
   }
 
+  // 加载整个列表并播放第一首（用于"播放全部"）
+  function loadPlaylist(songs, startIndex = 0) {
+    if (!Array.isArray(songs) || !songs.length) return
+    playlist.value = [...songs]
+    currentIndex.value = startIndex
+    const first = songs[startIndex]
+    currentSong.value = first
+    isPlaying.value = true
+    if (first?.songId) {
+      songApi.play(first.songId).catch(() => {})
+      meApi.recordHistory(first.songId).catch(() => {})
+    }
+    nextTick(() => audioEl.value?.play())
+  }
+
   function play(index) {
     if (index >= 0 && index < playlist.value.length) {
       currentIndex.value = index
