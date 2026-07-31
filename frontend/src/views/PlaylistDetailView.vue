@@ -73,8 +73,9 @@ const formatCount = (n) => {
   return n > 10000 ? (n / 10000).toFixed(1) + 'w' : n
 }
 
-onMounted(async () => {
+const loadPlaylist = async () => {
   const id = route.params.id
+  loadError.value = false
   document.title = '歌单详情 · Music Dreamer'
   try {
     const res = await playlistApi.getById(id)
