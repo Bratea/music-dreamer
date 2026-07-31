@@ -170,17 +170,18 @@ const onPublish = async () => {
 }
 
 const onOffline = async (id) => {
-  const { data } = await songApi.offlineSong(id)
-  data?.code === 200 ? (ElMessage.success('已下架'), loadSongs()) : ElMessage.error('操作失败')
+  // 拦截器已解包为 CommonResult，直接用 res.code 判断
+  const res = await songApi.offlineSong(id)
+  res?.code === 200 ? (ElMessage.success('已下架'), loadSongs()) : ElMessage.error('操作失败')
 }
 const onResubmit = async (id) => {
-  const { data } = await songApi.reSubmitSong(id)
-  data?.code === 200 ? (ElMessage.success('已重新提交审核'), loadSongs()) : ElMessage.error('操作失败')
+  const res = await songApi.reSubmitSong(id)
+  res?.code === 200 ? (ElMessage.success('已重新提交审核'), loadSongs()) : ElMessage.error('操作失败')
 }
 const onEdit = (s) => { router.push(`/song/${s.songId}`) }
 const onDelete = async (id) => {
-  const { data } = await songApi.deleteSong(id)
-  data?.code === 200 ? (ElMessage.success('已删除'), loadSongs()) : ElMessage.error('删除失败')
+  const res = await songApi.deleteSong(id)
+  res?.code === 200 ? (ElMessage.success('已删除'), loadSongs()) : ElMessage.error('删除失败')
 }
 
 watch(statusFilter, loadSongs)
