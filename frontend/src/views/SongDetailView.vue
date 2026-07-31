@@ -130,7 +130,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { songApi, meApi } from '../api'
 import { usePlayerStore } from '../store/player'
