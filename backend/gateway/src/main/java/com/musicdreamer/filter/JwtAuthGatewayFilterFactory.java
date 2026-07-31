@@ -35,17 +35,23 @@ public class JwtAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Ob
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             String path = exchange.getRequest().getPath().value();
-            // Skip auth for public paths only
-            if (path.startsWith("/api/auth/")
+            String method = exchange.getRequest().getMethod().name();
+
+            // 写操作（POST/PUT/DELETE）始终需要认证，不允许绕过
+            if (!"GET".equals(method)) {
+                // fall through to JWT validation below}
+            } else if (path.startsWith("/api/auth/")
                 || path.startsWith("/api/search/")
-                || path.startsWith("/api/playlist/")
                 || path.startsWith("/api/song/hot")
                 || path.startsWith("/api/song/new")
                 || path.startsWith("/api/song/count")
                 || path.startsWith("/api/song/list/all")
                 || path.matches("/api/song/\\d+$")
                 || path.matches("/api/song/\\d+/similar$")
+                || path.matches("/api/playlist/\\d+$")
+                || path.equals("/api/playlist/hot")
                 || path.equals("/api/song")) {
+                // 仅允许特定只读 GET 路径绕过认证
                 return chain.filter(exchange);
             }
 
