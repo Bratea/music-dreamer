@@ -24,6 +24,7 @@ export const usePlayerStore = defineStore('player', () => {
     // 将歌曲加入播放列表（如不存在），并更新 currentIndex，使 prev/next/播放模式生效
     if (song?.songId) {
       songApi.play(song.songId).catch(() => {})
+      meApi.recordHistory(song.songId).catch(() => {})
       const existingIdx = playlist.value.findIndex(s => s.songId === song.songId)
       if (existingIdx >= 0) {
         currentIndex.value = existingIdx
