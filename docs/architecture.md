@@ -40,7 +40,7 @@
 | song-service | 8082 | 歌曲CRUD、播放量统计、歌词 |
 | playlist-service | 8083 | 歌单管理、收藏、推荐 |
 | search-service | 8084 | ES全文检索、搜索建议 |
-| file-service | 8085 | 音频/图片文件上传（可选） |
+| song-process-service | 8085 | RabbitMQ 消费者（歌曲发布/删除/下架事件处理） |
 
 ## 3. 技术组件职责
 
