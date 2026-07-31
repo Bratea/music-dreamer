@@ -213,10 +213,10 @@ const clearSearch = () => {
 const doCollect = async (song) => {
   try {
     if (collected[song.songId]) {
-      await songApi.uncollect(song.songId)
+      await meApi.uncollect(song.songId, 1)
       collected[song.songId] = false
     } else {
-      await songApi.collect(song.songId)
+      await meApi.collect(song.songId, 1)
       collected[song.songId] = true
     }
   } catch (e) {
