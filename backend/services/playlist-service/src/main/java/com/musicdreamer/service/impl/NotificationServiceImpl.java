@@ -29,9 +29,19 @@ public class NotificationServiceImpl
 
     @Override
     public void sendBatch(List<Long> userIds, String title, String content, Integer type) {
-        for (Long uid : userIds) {
-            sendNotification(uid, title, content, type);
-        }
+        if (userIds == null || userIds.isEmpty()) return;
+        // 批量构建后一次性插入，避免 N 次单条 INSERT
+        List<Notification> notifications = userIds.stream().map(uid -> {
+            Notification n = new Notification();
+            n.setUserId(uid);
+            n.setTitle(title);
+            n.setContent(content);
+            n.setType(type == null ? 1 : type);
+            n.setIsRead(0);
+            n.setCreateTime(LocalDateTime.now());
+            return n;
+        }).toList();
+        saveBatch(notifications);
     }
 
     @Override
