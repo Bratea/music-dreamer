@@ -26,4 +26,11 @@ public class CommonResult<T> {
         result.setMessage(message);
         return result;
     }
+
+    public static <T> CommonResult<T> error(String message) {
+        CommonResult<T> result = new CommonResult<>();
+        result.setCode(500);
+        result.setMessage(message);
+        return result;
+    }
 }
