@@ -11,15 +11,15 @@ const routes = [
     path: '/',
     component: LayoutView,
     children: [
-      { path: '', name: 'Home', component: () => import('../views/HomeView.vue') },
-      { path: '/search', name: 'Search', component: () => import('../views/SearchView.vue') },
+      { path: '', name: 'Home', component: () => import('../views/HomeView.vue'), meta: { keepAlive: true } },
+      { path: '/search', name: 'Search', component: () => import('../views/SearchView.vue'), meta: { keepAlive: true } },
       { path: '/song/:id', name: 'SongDetail', component: () => import('../views/SongDetailView.vue') },
       { path: '/playlist/:id', name: 'PlaylistDetail', component: () => import('../views/PlaylistDetailView.vue') },
-      { path: '/singer', name: 'SingerCenter', component: () => import('../views/SingerCenterView.vue') },
+      { path: '/singer', name: 'SingerCenter', component: () => import('../views/SingerCenterView.vue'), meta: { keepAlive: true } },
       { path: '/singer/apply', name: 'SingerApply', component: () => import('../views/SingerApplyView.vue') },
       { path: '/admin', name: 'AdminPanel', component: () => import('../views/AdminPanelView.vue') },
       { path: '/stats', name: 'DataStats', component: () => import('../views/DataStatsView.vue') },
-      { path: '/my', name: 'MyProfile', component: () => import('../views/MyProfileView.vue') },
+      { path: '/my', name: 'MyProfile', component: () => import('../views/MyProfileView.vue'), meta: { keepAlive: true } },
     ]
   },
 ]
