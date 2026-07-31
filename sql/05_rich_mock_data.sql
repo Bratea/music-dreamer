@@ -38,7 +38,7 @@ INSERT IGNORE INTO singer_apply (user_id, real_name, id_card, intro, gender, cou
 INSERT IGNORE INTO song_audit (song_id, status, audit_time, auditor_id, reject_reason) VALUES
 (34, 1, '2026-07-20 12:00:00', 1, NULL),
 (35, 2, '2026-07-19 14:00:00', 1, '歌词内容不符合平台规范'),
-(39, 1, '2026-07-22 10:00:00', 1, NULL);
+(36, 1, '2026-07-22 10:00:00', 1, NULL);
 
 
 INSERT IGNORE INTO user_collect (user_id, target_id, target_type) VALUES
