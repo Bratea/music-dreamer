@@ -192,7 +192,9 @@ const logout = () => {
 const onTimeUpdate = () => { player.currentTime = audioRef.value?.currentTime || 0 }
 const seek = (e) => {
   const bar = e.currentTarget
-  const pct = e.offsetX / bar.offsetWidth
+  // 使用 clientX 相对于 bar 左边缘计算，避免点击子元素（fill/thumb）时 offsetX 偏差
+  const rect = bar.getBoundingClientRect()
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
   if (audioRef.value?.duration) audioRef.value.currentTime = pct * audioRef.value.duration
 }
 const onVolume = () => { if (audioRef.value) audioRef.value.volume = player.volume / 100 }
