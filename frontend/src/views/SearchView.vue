@@ -30,7 +30,7 @@
           >
             <span class="suggestion-icon">🎵</span>
             <div class="suggestion-info">
-              <div class="suggestion-name" v-html="highlight(item.name)"></div>
+              <div class="suggestion-name"><span v-html="highlight(item.name)"></span></div>
               <div class="suggestion-singer">{{ item.singerName }}</div>
             </div>
             <span class="suggestion-play" @mousedown.stop="player.loadSong(item)">▶</span>
