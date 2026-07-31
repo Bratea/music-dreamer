@@ -58,8 +58,10 @@ class AuthServiceTest {
     @Test
     void login_fail_wrongPassword() {
         var user = new com.musicdreamer.entity.User();
-        user.setPassword(new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode("secret"));
+        user.setPassword("hashed-secret");
         when(userMapper.selectOne(any())).thenReturn(user);
+        // Mock 密码匹配失败
+        when(passwordEncoder.matches("wrong-password", "hashed-secret")).thenReturn(false);
 
         var req = new LoginRequest();
         req.setUsername("test");
