@@ -49,6 +49,12 @@
     </div>
   </div>
 
+  <div class="pl-loading" v-else-if="loadError">
+    <p>歌单加载失败</p>
+    <p class="error-hint">歌单不存在或网络异常</p>
+    <button class="error-retry" @click="loadPlaylist">重试</button>
+  </div>
+
   <div class="pl-loading" v-else>
     <div class="loading-ring"></div>
     <p>加载中...</p>
