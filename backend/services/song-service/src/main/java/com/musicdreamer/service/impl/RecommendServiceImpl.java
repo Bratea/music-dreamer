@@ -112,9 +112,15 @@ public class RecommendServiceImpl implements RecommendService {
                         .last("LIMIT 200"));
         if (histories.isEmpty()) return getHotSongs(1, size);
 
+        // 批量查询歌曲，避免 N+1
+        List<Long> songIds = histories.stream().map(UserHistory::getSongId).distinct().toList();
+        Map<Long, Song> songMap = songIds.isEmpty() ? Map.of()
+                : songMapper.selectList(new LambdaQueryWrapper<Song>().in(Song::getSongId, songIds))
+                        .stream().collect(Collectors.toMap(Song::getSongId, s -> s));
+
         Map<String, Long> genreCount = new HashMap<>();
         for (UserHistory h : histories) {
-            Song s = songMapper.selectById(h.getSongId());
+            Song s = songMap.get(h.getSongId());
             if (s != null && s.getGenre() != null)
                 genreCount.merge(s.getGenre(), 1L, Long::sum);
         }
