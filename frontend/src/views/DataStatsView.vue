@@ -69,7 +69,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { adminApi } from '../api'
 
-const stats = ref({ totalUsers: 0, totalSongs: 0, totalPlayCount: 0, totalFollowers: 0 })
+const stats = ref({ totalUsers: 0, totalSongs: 0, totalPlayCount: 0, totalFollowers: 0, pendingCount: 0 })
 const dailyStats = ref([])
 
 onMounted(async () => {
