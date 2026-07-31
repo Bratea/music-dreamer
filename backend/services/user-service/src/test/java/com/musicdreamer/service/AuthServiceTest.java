@@ -32,10 +32,13 @@ class AuthServiceTest {
         user.setUsername("test");
         user.setNickname("Tester");
         user.setStatus(1);
+        user.setPassword("hashed-password");
         when(userMapper.selectOne(any())).thenReturn(user);
+        // Mock 密码匹配成功
+        when(passwordEncoder.matches("password", "hashed-password")).thenReturn(true);
         when(jwtUtils.generateAccessToken(any())).thenReturn("access-token");
         when(jwtUtils.generateRefreshToken(any())).thenReturn("refresh-token");
-        when(jwtUtils.getExpiration()).thenReturn(86400000L);
+        when(jwtUtils.getExpiration()).thenReturn(900000L);
 
         var req = new LoginRequest();
         req.setUsername("test");
