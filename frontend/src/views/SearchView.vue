@@ -167,14 +167,23 @@ const selectSuggestion = (item) => {
   doSearch()
 }
 
+// HTML 实体转义，防止歌曲名中的特殊字符被解析为 HTML（防 XSS）
+const escapeHtml = (s) => s ? String(s)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;') : ''
+
 const highlight = (text) => {
-  if (!keyword.value.trim() || !text) return text
+  if (!keyword.value.trim() || !text) return escapeHtml(text)
   const kw = keyword.value.trim()
   const idx = text.indexOf(kw)
   if (idx >= 0) {
-    return text.substring(0, idx) + '<strong>' + text.substring(idx, idx + kw.length) + '</strong>' + text.substring(idx + kw.length)
+    // 仅关键词包裹 <strong>，其余文本全部转义
+    return escapeHtml(text.substring(0, idx)) + '<strong>' + escapeHtml(text.substring(idx, idx + kw.length)) + '</strong>' + escapeHtml(text.substring(idx + kw.length))
   }
-  return text
+  return escapeHtml(text)
 }
 
 const doSearch = async () => {
