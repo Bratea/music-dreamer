@@ -92,9 +92,10 @@ public class CanalSyncConfig {
                 connector = CanalConnectors.newSingleConnector(
                         new InetSocketAddress(host, port), destination, username, password);
                 connector.connect();
-                connector.subscribe(".*\\..*");
+                // 仅订阅 song 表，避免处理无关 binlog 事件浪费 CPU/IO
+                connector.subscribe("music_dreamer.song");
                 connector.rollback();
-                log.info("[Canal] connected to {}:{}", host, port);
+                log.info("[Canal] connected to {}:{}, subscribed to music_dreamer.song", host, port);
 
                 while (running.get()) {
                     var messages = connector.getWithoutAck(100, 100L, TimeUnit.MILLISECONDS);
@@ -103,28 +104,33 @@ public class CanalSyncConfig {
                         Thread.sleep(1000);
                         continue;
                     }
+                    // 单行处理失败不应阻塞整个 batch 的 ack，避免毒消息导致无限重放
                     for (var entry : messages.getEntries()) {
                         if (entry.getEntryType() == com.alibaba.otter.canal.protocol.CanalEntry.EntryType.ROWDATA) {
-                            var rowChange = com.alibaba.otter.canal.protocol.CanalEntry.RowChange.parseFrom(entry.getStoreValue());
-                            for (var rowData : rowChange.getRowDatasList()) {
-                                if (rowChange.getEventType() == com.alibaba.otter.canal.protocol.CanalEntry.EventType.INSERT
-                                        || rowChange.getEventType() == com.alibaba.otter.canal.protocol.CanalEntry.EventType.UPDATE) {
-                                    var idCol = rowData.getAfterColumnsList().stream()
-                                            .filter(c -> c.getName().equals("song_id"))
-                                            .findFirst();
-                                    if (idCol.isPresent()) {
-                                        Long songId = Long.parseLong(idCol.get().getValue());
-                                        SongDoc song = enrichFromDb(songId);
-                                        if (song != null) indexSyncService.indexSong(song);
-                                    }
-                                } else if (rowChange.getEventType() == com.alibaba.otter.canal.protocol.CanalEntry.EventType.DELETE) {
-                                    var idCol = rowData.getBeforeColumnsList().stream()
-                                            .filter(c -> c.getName().equals("song_id"))
-                                            .findFirst();
-                                    if (idCol.isPresent()) {
-                                        indexSyncService.deleteSong(Long.parseLong(idCol.get().getValue()));
+                            try {
+                                var rowChange = com.alibaba.otter.canal.protocol.CanalEntry.RowChange.parseFrom(entry.getStoreValue());
+                                for (var rowData : rowChange.getRowDatasList()) {
+                                    if (rowChange.getEventType() == com.alibaba.otter.canal.protocol.CanalEntry.EventType.INSERT
+                                            || rowChange.getEventType() == com.alibaba.otter.canal.protocol.CanalEntry.EventType.UPDATE) {
+                                        var idCol = rowData.getAfterColumnsList().stream()
+                                                .filter(c -> c.getName().equals("song_id"))
+                                                .findFirst();
+                                        if (idCol.isPresent()) {
+                                            Long songId = Long.parseLong(idCol.get().getValue());
+                                            SongDoc song = enrichFromDb(songId);
+                                            if (song != null) indexSyncService.indexSong(song);
+                                        }
+                                    } else if (rowChange.getEventType() == com.alibaba.otter.canal.protocol.CanalEntry.EventType.DELETE) {
+                                        var idCol = rowData.getBeforeColumnsList().stream()
+                                                .filter(c -> c.getName().equals("song_id"))
+                                                .findFirst();
+                                        if (idCol.isPresent()) {
+                                            indexSyncService.deleteSong(Long.parseLong(idCol.get().getValue()));
+                                        }
                                     }
                                 }
+                            } catch (Exception e) {
+                                log.warn("[Canal] failed to process entry, skip: {}", e.getMessage());
                             }
                         }
                     }
