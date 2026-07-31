@@ -114,9 +114,18 @@
     </Teleport>
   </div>
 
-  <div class="song-loading" v-else>
+  <div class="song-loading" v-else-if="!loadError">
     <div class="loading-ring"></div>
     <p>加载中...</p>
+  </div>
+
+  <!-- 加载失败状态 -->
+  <div class="song-error" v-else>
+    <span class="error-ico">⚠️</span>
+    <p>歌曲加载失败</p>
+    <p class="error-hint">歌曲不存在或网络异常</p>
+    <button class="error-back" @click="router.back()">返回</button>
+    <button class="error-retry" @click="loadSong()">重试</button>
   </div>
 </template>
 
