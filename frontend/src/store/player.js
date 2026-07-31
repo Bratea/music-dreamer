@@ -45,8 +45,19 @@ export const usePlayerStore = defineStore('player', () => {
     if (playMode.value === 'random') {
       const idx = Math.floor(Math.random() * playlist.value.length)
       play(idx)
+    } else if (playMode.value === 'loop') {
+      // 单曲循环：重新播放当前歌曲
+      if (audioEl.value) {
+        audioEl.value.currentTime = 0
+        audioEl.value.play()
+      } else {
+        play(currentIndex.value)
+      }
     } else if (hasNext.value) {
       play(currentIndex.value + 1)
+    } else if (playMode.value === 'sequence') {
+      // 顺序播放到末尾：停止
+      isPlaying.value = false
     }
   }
 
