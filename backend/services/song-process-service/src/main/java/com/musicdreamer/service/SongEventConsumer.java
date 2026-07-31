@@ -40,8 +40,8 @@ public class SongEventConsumer {
             log.info("[MQ] 歌曲处理完成: songId={}", event.getSongId());
         } catch (Exception e) {
             log.error("[MQ] 处理歌曲事件失败: songId={} error={}", event.getSongId(), e.getMessage(), e);
-            // 消息会重新入队（取决于 ack 模式）
-            throw e;
+            // 不重新抛出异常，避免毒消息导致无限重投
+            // 生产环境应配合死信队列（DLQ）+ 重试上限，将超过重试次数的消息转入 DLQ
         }
     }
 }
