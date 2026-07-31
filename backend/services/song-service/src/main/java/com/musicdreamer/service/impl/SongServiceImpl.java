@@ -12,11 +12,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
 
     @Override
     public Long sumPlayCount() {
-        // 使用聚合 SQL：SELECT SUM(play_count) FROM song
-        Long sum = baseMapper.selectOne(
-                new LambdaQueryWrapper<Song>().select(Song::getPlayCount)
-        ) == null ? 0L : null;
-        // 通过 SQL 函数聚合
+        // 使用聚合 SQL：SELECT IFNULL(SUM(play_count), 0) FROM song
         return baseMapper.sumPlayCount();
     }
 }
