@@ -97,14 +97,7 @@ onMounted(async () => {
       document.title = `${playlist.value.name} · Music Dreamer`
     }
   } catch (e) {
-    playlist.value = {
-      playlistId: id,
-      name: '歌单',
-      description: '暂无描述',
-      playCount: 0,
-      cover: '🎶',
-    }
-    songs.value = []
+    console.error('加载歌单失败:', e)
   }
 })
 
