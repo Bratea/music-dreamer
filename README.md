@@ -163,10 +163,12 @@ cd docker && docker-compose up -d mysql redis elasticsearch nacos rabbitmq
 ```bash
 # 1. 启动本地 MySQL + Redis
 
-# 2. 导入数据库（按数字前缀顺序执行）
+# 2. 导入数据库（按数字前缀顺序执行，03 引用了 05 的 song_id 31-33，需全部导入）
 mysql -u root -p < sql/01_schema.sql
 mysql -u root -p < sql/02_role-singer-audit.sql
 mysql -u root -p music_dreamer < sql/03_mock_data.sql
+mysql -u root -p music_dreamer < sql/04_cover_images.sql
+mysql -u root -p music_dreamer < sql/05_rich_mock_data.sql
 
 # 3. 启动后端（按顺序，开 6 个终端）
 cd backend
