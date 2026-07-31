@@ -114,7 +114,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { songApi } from '../api'
+import { songApi, meApi } from '../api'
 import { usePlayerStore } from '../store/player'
 
 const player = usePlayerStore()
