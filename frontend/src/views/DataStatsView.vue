@@ -85,9 +85,18 @@ const loadStats = async () => {
       totalUsers: d.totalUsers || 0,
       totalSongs: d.totalSongs || 0,
       totalPlayCount: d.totalPlayCount || 0,
-      totalFollowers: d.totalFollowers || 0
+      totalFollowers: d.totalFollowers || 0,
+      pendingCount: d.pendingCount || 0
     }
   } catch (e) { console.error(e) }
+}
+// 加载真实的待审核歌曲数量（statsOverview 可能不含该字段，单独回查）
+const loadPendingCount = async () => {
+  try {
+    const res = await adminApi.pendingSongs()
+    const d = res?.data?.data || res?.data || []
+    stats.value.pendingCount = Array.isArray(d) ? d.length : 0
+  } catch (e) { stats.value.pendingCount = 0 }
 }
 
 const loadDaily = async () => {
