@@ -31,8 +31,4 @@ public class CommonResult<T> {
     public static <T> CommonResult<T> error(int code, String message, T data) {
         return new CommonResult<>(code, message, data);
     }
-
-    public static <T> CommonResult<T> error(String message) {
-        return new CommonResult<>(500, message, null);
-    }
 }
