@@ -52,18 +52,19 @@ public class SearchServiceImpl implements SearchService {
         // Use native query with multi_match and wildcard for partial matching
         try {
             NativeQueryBuilder builder = NativeQuery.builder();
-            // Combine multi_match with wildcard for better Chinese search
+            // 使用 multi_match + match_phrase_prefix 实现部分匹配
+            // 避免前导通配符（*keyword*）导致全词项扫描，提升 ES 性能
             Query boolQuery = Query.of(q -> q.bool(b -> b
                     .should(s -> s.multiMatch(mm -> mm
                             .fields("name^3", "singerName^2", "lyrics", "genre")
                             .query(searchKeyword)
                             .fuzziness("AUTO")))
-                    .should(s -> s.wildcard(w -> w
+                    .should(s -> s.matchPhrasePrefix(mp -> mp
                             .field("name")
-                            .value("*" + searchKeyword + "*")))
-                    .should(s -> s.wildcard(w -> w
+                            .query(searchKeyword)))
+                    .should(s -> s.matchPhrasePrefix(mp -> mp
                             .field("singerName")
-                            .value("*" + searchKeyword + "*")))
+                            .query(searchKeyword)))
             ));
             builder.withQuery(boolQuery);
             // 使用正确的 from/size 分页：from 为起始偏移，size 为每页条数
