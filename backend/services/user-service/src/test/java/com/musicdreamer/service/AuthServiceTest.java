@@ -20,6 +20,7 @@ class AuthServiceTest {
     @Mock UserService userService;
     @Mock com.musicdreamer.mapper.UserMapper userMapper;
     @Mock com.musicdreamer.util.JwtUtils jwtUtils;
+    @Mock org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @InjectMocks com.musicdreamer.service.impl.AuthServiceImpl authService;
 
