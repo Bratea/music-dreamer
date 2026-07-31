@@ -18,7 +18,7 @@ public class SongEventPublisher {
     @Value("${rabbitmq.exchange:music.exchange}")
     private String exchange;
 
-    @Value("${rabbitmq.routing.publish:queue.song.publish}")
+    @Value("${rabbitmq.routing.publish:song.publish}")
     private String routingKey;
 
     public SongEventPublisher(RabbitTemplate rabbitTemplate) {
