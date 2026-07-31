@@ -28,7 +28,8 @@ mybatis-plus:
     db-config:
       id-type: auto
 
-spring.cloud.sentinel.transport.dashboard: localhost:8080
+# Sentinel 控制台地址（未部署 Sentinel dashboard 时注释掉，避免无效连接）
+# spring.cloud.sentinel.transport.dashboard: sentinel:8080
 
 logging:
   level:
