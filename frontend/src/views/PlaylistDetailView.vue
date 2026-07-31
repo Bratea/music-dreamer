@@ -66,6 +66,7 @@ const player = usePlayerStore()
 
 const playlist = ref(null)
 const songs = ref([])
+const loadError = ref(false)
 
 const formatCount = (n) => {
   if (!n) return '0'
