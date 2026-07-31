@@ -80,12 +80,20 @@ onMounted(async () => {
     const data = res?.data || res
     if (data) {
       playlist.value = data.playlist || data
-      // 后端只返回 songId，需要逐个获取完整歌曲信息
+      // 后端只返回 songId，使用 batch 端点一次性获取完整歌曲信息，避免 N+1
       const rawSongs = data.songs || []
-      const songIds = rawSongs.map(s => s.songId)
-      const songDetailPromises = songIds.map(sid => songApi.getById(sid).then(r => r?.data || r).catch(() => null))
-      const songDetails = await Promise.all(songDetailPromises)
-      songs.value = songDetails.filter(Boolean)
+      const songIds = rawSongs.map(s => s.songId).filter(Boolean)
+      if (songIds.length > 0) {
+        try {
+          const batchRes = await songApi.getByIds(songIds)
+          const batchData = batchRes?.data || batchRes
+          songs.value = Array.isArray(batchData) ? batchData : []
+        } catch (e) {
+          songs.value = []
+        }
+      } else {
+        songs.value = []
+      }
       document.title = `${playlist.value.name} · Music Dreamer`
     }
   } catch (e) {
