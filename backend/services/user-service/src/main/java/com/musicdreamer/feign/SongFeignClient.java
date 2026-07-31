@@ -59,4 +59,10 @@ public interface SongFeignClient {
      */
     @GetMapping("/api/song/list/all")
     CommonResult<List<Song>> listAll();
+
+    /**
+     * 查询总播放量（聚合查询，避免加载全表）
+     */
+    @GetMapping("/api/song/total-play-count")
+    CommonResult<Long> totalPlayCount();
 }
