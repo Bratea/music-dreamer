@@ -77,7 +77,7 @@ const existingApply = ref(null)
 const showForm = ref(true)
 const submitting = ref(false)
 const form = reactive({
-  realName: '', idCard: '', intro: '', gender: 0, country: '', birthday: '', avatar: ''
+  realName: '', idCard: '', stageName: '', intro: '', gender: 0, country: '', birthday: '', avatar: ''
 })
 
 const statusText = (s) => ({ 0: '待审核', 1: '已通过', 2: '已拒绝' }[s] || '未知')
