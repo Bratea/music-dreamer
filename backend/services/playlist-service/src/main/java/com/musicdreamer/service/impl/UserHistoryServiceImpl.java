@@ -27,10 +27,12 @@ public class UserHistoryServiceImpl
 
     @Override
     public List<UserHistory> getRecentHistory(Long userId, int limit) {
+        // 限制上限，防止请求过大导致性能问题
+        int safeLimit = Math.min(Math.max(limit, 1), 200);
         return lambdaQuery()
                 .eq(UserHistory::getUserId, userId)
                 .orderByDesc(UserHistory::getPlayTime)
-                .last("LIMIT " + limit)
+                .last("LIMIT " + safeLimit)
                 .list();
     }
 
