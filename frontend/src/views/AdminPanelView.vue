@@ -212,7 +212,7 @@ const auditPass = async (id) => {
 }
 const showReject = (id) => { rejectSongId.value = id; rejectReason.value = '' }
 const confirmReject = async () => {
-  if (!rejectReason.value.trim()) return message.warning('请填写拒绝原因')
+  if (!rejectReason.value.trim()) return ElMessage.warning('请填写拒绝原因')
   const { data } = await adminApi.auditReject(rejectSongId.value, rejectReason.value)
   data?.code === 200 ? (ElMessage.success('已拒绝'), rejectSongId.value = null, loadPendingSongs()) : ElMessage.error('操作失败')
 }
