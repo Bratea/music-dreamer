@@ -18,7 +18,7 @@
 | create_time | datetime | 创建时间 |
 | update_time | datetime | 更新时间 |
 
-**索引**: idx_email, idx_phone, idx_username
+**索引**: uk_email, uk_phone, uk_username
 
 ## 2. 歌手表 (singer)
 
