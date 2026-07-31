@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, nextTick } from 'vue'
-import { songApi } from '../api'
+import { songApi, meApi } from '../api'
 
 export const usePlayerStore = defineStore('player', () => {
   const currentSong = ref(null)
