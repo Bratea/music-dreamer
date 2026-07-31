@@ -144,12 +144,14 @@ const loadAll = async () => {
 const loadCollections = async () => {
   try {
     const res = await meApi.getCollections()
+    // 拦截器已解包为 CommonResult，其 data 字段是数组
     const d = res?.data || res || []
     collections.value = (Array.isArray(d) ? d : []).map(c => ({
       ...c,
-      name: c.targetType === 1 ? `歌曲 #${c.targetId}` : `歌单 #${c.targetId}`,
-      singerName: '',
-      cover: ''
+      // 仅当没有名称时才使用占位符，保留 API 返回的真实名称
+      name: c.name || c.targetName || (c.targetType === 1 ? `歌曲 #${c.targetId}` : `歌单 #${c.targetId}`),
+      singerName: c.singerName || '',
+      cover: c.cover || ''
     }))
   } catch (e) { collections.value = [] }
 }
@@ -160,9 +162,9 @@ const loadHistory = async () => {
     const d = res?.data || res || []
     history.value = (Array.isArray(d) ? d : []).map(h => ({
       ...h,
-      name: `歌曲 #${h.songId}`,
-      singerName: '',
-      cover: ''
+      name: h.name || h.songName || `歌曲 #${h.songId}`,
+      singerName: h.singerName || '',
+      cover: h.cover || ''
     }))
   } catch (e) { history.value = [] }
 }
@@ -181,31 +183,32 @@ const loadFollowing = async () => {
     const d = res?.data || res || []
     following.value = (Array.isArray(d) ? d : []).map(f => ({
       singerId: f.singerId,
-      name: `歌手 #${f.singerId}`,
-      intro: '',
-      avatar: ''
+      name: f.name || f.singerName || `歌手 #${f.singerId}`,
+      intro: f.intro || '',
+      avatar: f.avatar || ''
     }))
   } catch (e) { following.value = [] }
 }
 
 const uncollect = async (c) => {
-  const { data } = await meApi.uncollect(c.targetId, c.targetType)
-  data?.code === 200 ? (ElMessage.success('已取消收藏'), loadCollections()) : ElMessage.error('操作失败')
+  // 拦截器已解包为 CommonResult，直接用 res.code 判断，不再解构 { data }
+  const res = await meApi.uncollect(c.targetId, c.targetType)
+  res?.code === 200 ? (ElMessage.success('已取消收藏'), loadCollections()) : ElMessage.error('操作失败')
 }
 const onClearHistory = async () => {
-  const { data } = await meApi.clearHistory()
-  data?.code === 200 ? (ElMessage.success('已清空'), loadHistory()) : ElMessage.error('操作失败')
+  const res = await meApi.clearHistory()
+  res?.code === 200 ? (ElMessage.success('已清空'), loadHistory()) : ElMessage.error('操作失败')
 }
 const markRead = async (id) => {
-  const { data } = await meApi.markNotificationRead(id)
-  if (data?.code === 200) {
+  const res = await meApi.markNotificationRead(id)
+  if (res?.code === 200) {
     const n = notifications.value.find(x => x.notificationId === id)
     if (n) n.isRead = 1
   }
 }
 const unfollow = async (singerId) => {
-  const { data } = await meApi.unfollowSinger(singerId)
-  data?.code === 200 ? (ElMessage.success('已取消关注'), loadFollowing()) : ElMessage.error('操作失败')
+  const res = await meApi.unfollowSinger(singerId)
+  res?.code === 200 ? (ElMessage.success('已取消关注'), loadFollowing()) : ElMessage.error('操作失败')
 }
 
 const formatDate = (t) => t ? new Date(t).toLocaleDateString() : '-'
