@@ -47,6 +47,7 @@ public class SearchServiceImpl implements SearchService {
         int size = Math.min(Math.max(request.getSize(), 1), 100); // 限制 1~100
 
         List<SongDoc> results = Collections.emptyList();
+        long totalHits = 0;
 
         // Use native query with multi_match and wildcard for partial matching
         try {
@@ -65,12 +66,13 @@ public class SearchServiceImpl implements SearchService {
                             .value("*" + searchKeyword + "*")))
             ));
             builder.withQuery(boolQuery);
-            // 一次性拉取当前页所需数据（ES 深度分页建议用 search_after，此处数据量小用 from/size）
-            builder.withPageable(PageRequest.of(0, size * page));
+            // 使用正确的 from/size 分页：from 为起始偏移，size 为每页条数
+            builder.withPageable(PageRequest.of(page - 1, size));
             SearchHits<SongDoc> searchHits = elasticsearchOperations.search(builder.build(), SongDoc.class);
             results = searchHits.getSearchHits().stream()
                     .map(h -> h.getContent())
                     .collect(Collectors.toList());
+            totalHits = searchHits.getTotalHits();
         } catch (Exception e) {
             // ignore
         }
@@ -79,8 +81,9 @@ public class SearchServiceImpl implements SearchService {
         if (results.isEmpty()) {
             try {
                 Page<SongDoc> pageResult = songDocRepository.findByNameContainingOrSingerNameContainingOrLyricsContaining(
-                        keyword, keyword, keyword, PageRequest.of(0, 100));
+                        keyword, keyword, keyword, PageRequest.of(page - 1, size));
                 results = pageResult.getContent();
+                totalHits = pageResult.getTotalElements();
             } catch (Exception e2) {
                 // ignore
             }
@@ -89,12 +92,10 @@ public class SearchServiceImpl implements SearchService {
         SearchResult result = new SearchResult();
         result.setPage(page);
         result.setSize(size);
-        result.setTotal(results.size());
+        result.setTotal(totalHits);
 
-        // Paginate
-        int from = (page - 1) * size;
-        int to = Math.min(from + size, results.size());
-        List<SongDoc> pageData = from < to ? results.subList(from, to) : Collections.emptyList();
+        // 数据已由 ES 分页返回，无需再次 subList
+        List<SongDoc> pageData = results;
 
         result.setSongs(pageData.stream()
                 .map(doc -> {
