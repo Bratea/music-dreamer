@@ -13,7 +13,7 @@ public class RedissonConfig {
     @Value("redis://${REDIS_HOST:redis}:${REDIS_PORT:6379}")
     private String address;
 
-    @Value("${REDIS_PASSWORD:}")
+    @Value("${REDIS_PASSWORD:redis123456}")
     private String password;
 
     @Bean(destroyMethod = "shutdown")
