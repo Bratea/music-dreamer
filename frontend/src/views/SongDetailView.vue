@@ -168,23 +168,9 @@ onMounted(async () => {
       checkCollected()
     }
   } catch (e) {
-    song.value = {
-      songId: id,
-      name: '夜曲',
-      singerName: '周杰伦',
-      playCount: 128000,
-      likeCount: 5600,
-      duration: 237,
-      cover: '🌙',
-      genre: '流行',
-      language: '国语',
-      lyrics: '一群嗜血的蚂蚁 被腐肉所吸引\n我面无表情看孤独的风景\n失去你 爱恨开始分明\n失去你 还有什么事好关心\n当鸽子不再象征和平\n我终于提醒我\n广场上喂食的是秃鹰\n我用漂亮的押韵\n形容一笔易碎的爱情',
-    }
-    relatedSongs.value = [
-      { songId: 2, name: '晴天', singerName: '周杰伦', cover: '☀️' },
-      { songId: 3, name: '稻香', singerName: '周杰伦', cover: '🌾' },
-      { songId: 5, name: '七里香', singerName: '周杰伦', cover: '🌸' },
-    ]
+    // API 失败时显示错误状态，而非渲染假数据误导用户
+    loadError.value = true
+    console.error('加载歌曲详情失败:', e)
   }
 })
 
