@@ -176,9 +176,11 @@ public class RecommendServiceImpl implements RecommendService {
         @SuppressWarnings("unchecked")
         List<SongVO> cached = (List<SongVO>) redisTemplate.opsForValue().get(key);
         if (cached != null) return Map.of("songs", cached, "source", "cache");
-        Map<String, Object> result = getPersonalRecommend(userId, size);
-        List<SongVO> songs = (List<SongVO>) result.get("songs");
+        Map<String, Object> base = getPersonalRecommend(userId, size);
+        List<SongVO> songs = (List<SongVO>) base.get("songs");
         if (!songs.isEmpty()) redisTemplate.opsForValue().set(key, songs, 1, TimeUnit.DAYS);
+        // getPersonalRecommend 返回的是不可变 Map.of()，需复制到可变 Map 再追加字段
+        Map<String, Object> result = new HashMap<>(base);
         result.put("source", "generated");
         return result;
     }
