@@ -123,6 +123,9 @@ public class SongController {
     @GetMapping("/list/all")
     @Operation(summary = "查询所有歌曲", description = "供管理后台统计使用")
     public CommonResult<java.util.List<Song>> listAll() {
-        return CommonResult.success(songService.list());
+        // 限制最大返回量，防止数据量过大导致 OOM
+        List<Song> all = songService.list();
+        List<Song> capped = all.size() > 1000 ? all.subList(0, 1000) : all;
+        return CommonResult.success(capped);
     }
 }
