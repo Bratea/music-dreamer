@@ -101,5 +101,5 @@ export const usePlayerStore = defineStore('player', () => {
     el.addEventListener('ended', () => next())
   }
 
-  return { currentSong, playlist, currentIndex, isPlaying, progress, duration, volume, playMode, currentTime, audioEl, loadSong, play, togglePlay, next, prev, setAudio, hasNext, hasPrev }
+  return { currentSong, playlist, currentIndex, isPlaying, progress, duration, volume, playMode, currentTime, audioEl, loadSong, loadPlaylist, play, togglePlay, next, prev, setAudio, hasNext, hasPrev }
 })
