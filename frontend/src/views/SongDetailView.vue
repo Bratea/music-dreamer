@@ -192,6 +192,12 @@ onMounted(async () => {
   await loadSong()
 })
 
+// 路由参数变化时（如点击相关歌曲切换 /song/:id），组件会被复用，
+// onMounted 不会再次触发，必须监听 route.params.id 重新加载
+watch(() => route.params.id, (newId) => {
+  if (newId) loadSong()
+})
+
 const onPlay = () => {
   if (song.value) player.loadSong(song.value)
 }
