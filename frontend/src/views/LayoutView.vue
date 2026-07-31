@@ -70,11 +70,11 @@
       <!-- Page Content -->
       <div class="app-content">
         <router-view v-slot="{ Component, route: currentRoute }">
-          <!-- 使用 route.meta.keepAlive 判断是否缓存，避免 script setup 组件 name 无法匹配 -->
-          <keep-alive :include="cachedViews">
-            <component :is="Component" v-if="currentRoute.meta?.keepAlive !== false" :key="currentRoute.path" />
+          <!-- 需要缓存的视图通过 route.meta.keepAlive 标记 -->
+          <keep-alive>
+            <component :is="Component" v-if="currentRoute.meta?.keepAlive" :key="currentRoute.path" />
           </keep-alive>
-          <component :is="Component" v-if="currentRoute.meta?.keepAlive === false" :key="currentRoute.path" />
+          <component :is="Component" v-if="!currentRoute.meta?.keepAlive" :key="currentRoute.path" />
         </router-view>
       </div>
 
