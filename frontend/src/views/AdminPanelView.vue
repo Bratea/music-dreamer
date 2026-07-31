@@ -152,7 +152,7 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
-import { adminApi, songApi } from '../api'
+import { adminApi, songApi, singerApi } from '../api'
 import { ElMessage } from 'element-plus'
 
 const tab = ref('songs')
