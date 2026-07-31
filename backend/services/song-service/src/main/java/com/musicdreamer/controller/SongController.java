@@ -78,13 +78,15 @@ public class SongController {
     // ── 播放量统计 ──
 
     @PostMapping("/{id}/play")
-    @Operation(summary = "播放歌曲", description = "播放量+1，异步持久化到DB")
+    @Operation(summary = "播放歌曲", description = "播放量+1（Redis 计数，定时任务异步持久化到DB）")
     public CommonResult<Map<String, Object>> play(@PathVariable("id") Long id) {
         String key = "play:count:" + id;
         Long count = redisTemplate.opsForValue().increment(key);
         if (count == 1) redisTemplate.expire(key, 6, java.util.concurrent.TimeUnit.HOURS);
-        songService.lambdaUpdate().eq(Song::getSongId, id).setSql("play_count = play_count + 1").update();
-        return CommonResult.success(Map.of("songId", id, "playCount", count));
+        // 仅递增 Redis 计数器；DB 持久化由定时任务统一 flush，避免每次请求写 DB
+        // 返回 DB 真实累计播放量 + 当前窗口增量
+        Long totalPlayCount = songService.getById(id) != null ? songService.getById(id).getPlayCount() : 0L;
+        return CommonResult.success(Map.of("songId", id, "playCount", totalPlayCount + count));
     }
 
     @GetMapping("/hot")
