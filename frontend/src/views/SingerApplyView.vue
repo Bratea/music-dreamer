@@ -85,8 +85,8 @@ const formatDate = (t) => t ? new Date(t).toLocaleDateString() : '-'
 
 onMounted(async () => {
   try {
-    const { data } = await singerApi.getMyApply()
-    existingApply.value = data?.data
+    const res = await singerApi.getMyApply()
+    existingApply.value = res?.data
     if (existingApply.value?.status === 0) showForm.value = false
   } catch (e) { /* no apply yet */ }
 })
@@ -94,13 +94,13 @@ onMounted(async () => {
 const onSubmit = async () => {
   submitting.value = true
   try {
-    const { data } = await singerApi.apply(form)
-    if (data?.code === 200) {
+    const res = await singerApi.apply(form)
+    if (res?.code === 200) {
       ElMessage.success('认证申请已提交，等待审核')
-      existingApply.value = data.data
+      existingApply.value = res.data
       showForm.value = false
     } else {
-      ElMessage.error(data?.message || '提交失败')
+      ElMessage.error(res?.message || '提交失败')
     }
   } catch (e) { ElMessage.error('提交失败') }
   finally { submitting.value = false }
