@@ -69,10 +69,12 @@
 
       <!-- Page Content -->
       <div class="app-content">
-        <router-view v-slot="{ Component }">
-          <keep-alive include="HomeView,SearchView,MyProfileView,SingerCenterView">
-            <component :is="Component" />
+        <router-view v-slot="{ Component, route: currentRoute }">
+          <!-- 使用 route.meta.keepAlive 判断是否缓存，避免 script setup 组件 name 无法匹配 -->
+          <keep-alive :include="cachedViews">
+            <component :is="Component" v-if="currentRoute.meta?.keepAlive !== false" :key="currentRoute.path" />
           </keep-alive>
+          <component :is="Component" v-if="currentRoute.meta?.keepAlive === false" :key="currentRoute.path" />
         </router-view>
       </div>
 
