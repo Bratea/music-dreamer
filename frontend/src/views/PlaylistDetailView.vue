@@ -99,9 +99,12 @@ const loadPlaylist = async () => {
       document.title = `${playlist.value.name} · Music Dreamer`
     }
   } catch (e) {
+    loadError.value = true
     console.error('加载歌单失败:', e)
   }
-})
+}
+
+onMounted(loadPlaylist)
 
 const playAll = () => {
   if (songs.value.length) player.loadPlaylist(songs.value, 0)
