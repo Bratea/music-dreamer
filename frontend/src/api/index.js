@@ -38,6 +38,7 @@ export const meApi = {
   collect: (targetId, targetType = 1) => request.post('/me/collect', { targetId, targetType }),
   uncollect: (targetId, targetType = 1) => request.delete(`/me/collect/${targetId}`, { params: { targetType } }),
   isCollected: (targetId, targetType = 1) => request.get(`/me/collect/${targetId}`, { params: { targetType } }),
+  recordHistory: (songId, playDuration) => request.post('/me/history/record', { songId, playDuration }),
   getHistory: (limit = 50) => request.get('/me/history', { params: { limit } }),
   clearHistory: () => request.delete('/me/history'),
   getNotifications: () => request.get('/me/notifications'),
