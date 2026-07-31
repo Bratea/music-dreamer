@@ -136,4 +136,31 @@ public class SongController {
         Long total = songService.sumPlayCount();
         return CommonResult.success(total != null ? total : 0L);
     }
+
+    @GetMapping("/batch")
+    @Operation(summary = "批量查询歌曲详情", description = "用于歌单详情页一次性加载多首歌曲，避免 N+1")
+    public CommonResult<List<Song>> batchGet(@RequestParam("ids") String ids) {
+        if (ids == null || ids.isBlank()) {
+            return CommonResult.success(List.of());
+        }
+        try {
+            List<Long> songIds = Arrays.stream(ids.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .map(Long::parseLong)
+                    .distinct()
+                    .toList();
+            if (songIds.isEmpty()) {
+                return CommonResult.success(List.of());
+            }
+            // 限制批量大小，防止滥用
+            if (songIds.size() > 200) {
+                songIds = songIds.subList(0, 200);
+            }
+            List<Song> songs = songService.listByIds(songIds);
+            return CommonResult.success(songs);
+        } catch (NumberFormatException e) {
+            return CommonResult.error("ids 参数格式错误");
+        }
+    }
 }
