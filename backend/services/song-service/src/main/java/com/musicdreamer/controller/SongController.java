@@ -128,4 +128,12 @@ public class SongController {
         List<Song> capped = all.size() > 1000 ? all.subList(0, 1000) : all;
         return CommonResult.success(capped);
     }
+
+    @GetMapping("/total-play-count")
+    @Operation(summary = "查询总播放量", description = "供管理后台统计使用（聚合查询）")
+    public CommonResult<Long> totalPlayCount() {
+        // 使用聚合 SQL SUM(play_count)，避免加载全表
+        Long total = songService.sumPlayCount();
+        return CommonResult.success(total != null ? total : 0L);
+    }
 }
