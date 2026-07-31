@@ -110,6 +110,12 @@ const onRegister = async () => {
         localStorage.setItem('token', loginData.data.token)
         localStorage.setItem('refreshToken', loginData.data.refreshToken)
         window.location.href = '/'
+      } else {
+        // 注册成功但自动登录失败：提示并留在登录页
+        error.value = '注册成功，但自动登录失败，请手动登录'
+        // 切换到登录模式并预填用户名
+        mode.value = 'login'
+        loginForm.username = registerForm.username
       }
     } else {
       error.value = data?.message || '注册失败'
