@@ -57,6 +57,8 @@ public class SongAuditServiceImpl extends ServiceImpl<SongAuditMapper, SongAudit
 
     @Override
     public SongAudit getBySongId(Long songId) {
-        return lambdaQuery().eq(SongAudit::getSongId, songId).one();
+        // 一个 songId 可能有多条审核记录（如驳回后重新提审），取最新一条
+        return lambdaQuery().eq(SongAudit::getSongId, songId)
+                .orderByDesc(SongAudit::getAuditTime).last("LIMIT 1");
     }
 }
